@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SimpleMediaplayer.Themes">
+    
+    <SolidColorBrush Color="#000000" x:Key="DefaultMainPageBg"/>
+    <SolidColorBrush Color="#a0000000" x:Key="DefaultControlBarBg"/>
+    <SolidColorBrush Color="#80ffffff" x:Key="DefaultControlBarText"/>
+    <x:Double x:Key="DefaultControlBarTextSize">18</x:Double>
+</ResourceDictionary>

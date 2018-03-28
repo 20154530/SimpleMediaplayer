@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Grid Background="#ffffff">
+        <local:ControlBar x:Name="ControlBar" />
+        <Button Click="chang_Click"></Button>
     </Grid>
 </Page>
