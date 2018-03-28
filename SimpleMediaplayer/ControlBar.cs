@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Diagnostics;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Devices.Power;
@@ -14,8 +15,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 
-
-// The Templated Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234235
 
 namespace SimpleMediaplayer
 {
@@ -31,6 +30,12 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            base.OnTapped(e);
+            this.Visibility = this.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         public ControlBar()
         {
             this.DefaultStyleKey = typeof(ControlBar);
@@ -38,7 +43,7 @@ namespace SimpleMediaplayer
 
     }
 
-    public class SystemInfo : INotifyPropertyChanged
+    public class SystemInfo : INotifyPropertyChanged //系统信息
     {
         private DateTime time;
 
@@ -104,6 +109,8 @@ namespace SimpleMediaplayer
             Battery.AggregateBattery.ReportUpdated += GetBatteryUpdate;
             timer.Tick += UpdateTime;
             timer.Start();
+            GetBatteryUpdate(null, null);
+            UpdateTime(null, null);
         }
 
         private void UpdateTime(object sender, object args)
@@ -112,20 +119,21 @@ namespace SimpleMediaplayer
             Hour = time.Hour;
             Min = time.Minute;
             Sec = time.Second;
-            HourMin = String.Format("{0:00} :{1:00}", Hour, Min);
+            HourMin = String.Format("{0:00} : {1:00}", Hour, Min);
         }
 
+        #region 电池数据更新
         private void UpdateBattery(BatteryReport report, string DeviceID)
         {
-
+            double valuem = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
+            double valuen = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
+            BatteryLevel = String.Format("{0:N2} %", ((valuen / valuem) * 100));
         }
 
         private void RequestAggregateBatteryReport()
         {
             var aggBattery = Battery.AggregateBattery;
-
             var report = aggBattery.GetReport();
-
             UpdateBattery(report, aggBattery.DeviceId);
         }
 
@@ -133,6 +141,7 @@ namespace SimpleMediaplayer
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, RequestAggregateBatteryReport);
         }
+        #endregion
 
         #region 属性变化通知
         public event PropertyChangedEventHandler PropertyChanged;

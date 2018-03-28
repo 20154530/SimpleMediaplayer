@@ -2,9 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SimpleMediaplayer.Themes">
-    
-    <SolidColorBrush Color="#000000" x:Key="DefaultMainPageBg"/>
-    <SolidColorBrush Color="#a0000000" x:Key="DefaultControlBarBg"/>
-    <SolidColorBrush Color="#80ffffff" x:Key="DefaultControlBarText"/>
+
+    <!--主体信息配置-->
+    <SolidColorBrush x:Key="DefaultMainPageBg" Color="#000000"/>
+    <SolidColorBrush x:Key="DefaultControlBarBg" Color="#a0000000"/>
+    <SolidColorBrush x:Key="DefaultControlBarText" Color="#c0ffffff"/>
+    <SolidColorBrush x:Key="DefaultControlBarTextBg"
+                     Color="#e0000000" />
     <x:Double x:Key="DefaultControlBarTextSize">18</x:Double>
+    
 </ResourceDictionary>

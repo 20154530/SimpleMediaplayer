@@ -1,7 +1,60 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:SimpleMediaplayer.Themes">
-    
-    
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:SimpleMediaplayer">
+
+    <!--polylineButton-->
+    <Style x:Key="PolylineButton"
+           TargetType="local:PathButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PathButton">
+                    <Viewbox Stretch="Uniform">
+                        <Canvas Width="100"
+                                Height="100">
+                            <Polyline x:Name="ButtonFg"
+                                      Points="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}"
+                                      Fill="{TemplateBinding Foreground}"
+                                      Stroke="{TemplateBinding Background}"
+                                      StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}"
+                                      Margin="20,0,0,0" />
+                        </Canvas>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
+                                                                       Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#aa0000" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
+                                                                       Storyboard.TargetProperty="Points">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="#aa0000" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

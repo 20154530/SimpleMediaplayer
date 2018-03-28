@@ -7,7 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="#ffffff">
+    <Grid>
+        <Viewbox Stretch="Uniform" MinWidth="100" MinHeight="100">
+            <Image Source="/Icon/Button/Mou2.jpg"/>
+        </Viewbox>
         <local:ControlBar x:Name="ControlBar" />
         <Button Click="chang_Click"></Button>
     </Grid>
