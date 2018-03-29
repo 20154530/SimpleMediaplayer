@@ -5,64 +5,129 @@
 
     <!--ControlBar-->
     <Style TargetType="local:ControlBar">
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ControlBar">
-                    <Grid x:Name="RootPanel" DataContext="{StaticResource Info}" Background="{StaticResource DefaultControlBarBg}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="30" />
-                        </Grid.RowDefinitions>
-                        <Grid x:Name="StateBar" Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" MinWidth="80" />
-                                <ColumnDefinition Width="auto" MinWidth="160" />
-                            </Grid.ColumnDefinitions>
-                            <local:PathButton Style="{StaticResource PolylineButton}" Width="20" Height="20" 
+                    <Grid x:Name="RootPanel" DataContext="{StaticResource Info}" >
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ControlPanelVisibilityStates">
+                                <VisualState x:Name="ControlPanelFadeIn">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VisualablePanel" Storyboard.TargetProperty="Opacity">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ControlPanelFadeOut">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VisualablePanel" Storyboard.TargetProperty="Opacity">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VisualablePanel" Storyboard.TargetProperty="IsHitTestVisible">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="MediaStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Buffering">
+
+                                </VisualState>
+                                <VisualState x:Name="Loading">
+
+                                </VisualState>
+                                <VisualState x:Name="Error">
+
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard/>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PlayPauseStates">
+                                <VisualState x:Name="PlayState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PauseB.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayPauseButton.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PauseState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PauseB.Visibility" Value="Visible"/>
+                                        <Setter Target="PlayPauseButton.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="MediaTransportControlMode">
+                                <VisualState x:Name="NormalMode"/>
+                                <VisualState x:Name="CompactMode">
+                                    <VisualState.Setters>
+                                        <Setter Target="PlayPauseButton.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PauseB.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="VisualablePanel" Background="{StaticResource DefaultControlBarBg}" Opacity="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="30" />
+                            </Grid.RowDefinitions>
+                            <Grid x:Name="StateBar" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" MinWidth="80" />
+                                    <ColumnDefinition Width="auto" MinWidth="160" />
+                                </Grid.ColumnDefinitions>
+                                <local:PathButton Style="{StaticResource PolylineButton}" Width="20" Height="20" 
                                               ShapeN="37.3 0.09 3.71 33.68 0.18 37.21 3.71 40.75 37.3 74.33" 
                                               StrokeSize="4" 
                                               Margin="5,0,5,0" />
-                            <TextBlock x:Name="Filename" Foreground="{StaticResource DefaultControlBarText}" 
+                                <TextBlock x:Name="Filename" Foreground="{StaticResource DefaultControlBarText}" 
                                        FontSize="{StaticResource DefaultControlBarTextSize}" 
                                        Text="{TemplateBinding Filename}" 
                                        FontWeight="Light" Margin="10,0,10,0" 
                                        Grid.Column="1" 
                                        VerticalAlignment="Center" 
                                        />
-                            <TextBlock x:Name="SysTime" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding HourMin}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="2" VerticalAlignment="Center" />
-                            <TextBlock x:Name="SysBattery" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding BatteryLevel}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="3" VerticalAlignment="Center" />
-                        </Grid>
-                        <RelativePanel x:Name="ControlBar" Grid.Row="1">
-                            <local:PathButton x:Name="Play" 
+                                <TextBlock x:Name="SysTime" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding HourMin}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="2" VerticalAlignment="Center" />
+                                <TextBlock x:Name="SysBattery" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding BatteryLevel}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="3" VerticalAlignment="Center" />
+                            </Grid>
+                            <RelativePanel x:Name="ControlBar" Grid.Row="1">
+                                <local:PathButton x:Name="PlayPauseButton"
                                               ShapeN="M21,17.09,78,50,21,82.91V17.09Z"     
-                                              StrokeSize="4" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
+                                              StrokeSize="2" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
                                               FillN="Transparent" FillR="Transparent" FillP="Transparent" FillD="Transparent" RotateAngle="0"
-                                              Width="120" Height="120"
+                                              Width="120" Height="120" Visibility="Visible" 
                                               RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
-                            <local:PathButton x:Name="Pause" 
+                                <local:PathButton x:Name="PauseB" 
                                               ShapeN="M21,17.09,78,50,21,82.91V17.09"     
                                               StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
                                               FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="0"
-                                              Width="120" Height="120"
+                                              Width="120" Height="120" Visibility="Collapsed"
                                               RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
-                            <local:PathButton x:Name="Next" 
+                                <local:PathButton x:Name="NextB" 
                                               ShapeN="M21,17.09,78,50,21,82.91V17.09"     
                                               StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
                                               FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="0"
                                               Width="60" Height="60"
-                                              RelativePanel.RightOf="Play" Margin="120,0,0,0" RelativePanel.AlignVerticalCenterWith="Play"/>
-                            <local:PathButton x:Name="Prve" 
+                                              RelativePanel.RightOf="PlayPauseButton" Margin="120,0,0,0" RelativePanel.AlignVerticalCenterWith="PlayPauseButton"/>
+                                <local:PathButton x:Name="PrveB" 
                                               ShapeN="M21,17.09,78,50,21,82.91V17.09"     
                                               StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
                                               FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="180"
                                               Width="60" Height="60"
-                                              RelativePanel.LeftOf="Play" Margin="0,0,120,0" RelativePanel.AlignVerticalCenterWith="Play"/>
-                        </RelativePanel>
-                        <Grid x:Name="SettingBar" Grid.Row="2">
+                                              RelativePanel.LeftOf="PlayPauseButton" Margin="0,0,120,0" RelativePanel.AlignVerticalCenterWith="PlayPauseButton"/>
+                            </RelativePanel>
+                            <Grid x:Name="SettingBar" Grid.Row="2">
 
+                            </Grid>
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -150,8 +215,9 @@
         </Setter>
     </Style>
 
-
+    <!--MeidaPlayer-->
     <Style TargetType="local:YMediaPlayer" >
+        <Setter Property="AreTransportControlsEnabled" Value="True"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="IsTabStop" Value="False"/>
@@ -160,12 +226,10 @@
                 <ControlTemplate TargetType="local:YMediaPlayer">
                     <Grid x:Name="LayoutRoot">
                         <Border Background="Transparent"/>
-                        <Image x:Name="PosterImage" Stretch="{TemplateBinding Stretch}" Source="{TemplateBinding PosterSource}" Visibility="Collapsed"/>
                         <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
                                                   IsFullWindow="{TemplateBinding IsFullWindow}"
                                                   MediaPlayer="{TemplateBinding MediaPlayer}"
                                                   Stretch="{TemplateBinding Stretch}"/>
-                        <local:ControlBar x:Name="ControlBar" />
                         <ContentPresenter x:Name="TransportControlsPresenter" Visibility="{TemplateBinding AreTransportControlsEnabled}"/>
                         <Grid x:Name="TimedTextSourcePresenter"/>
                     </Grid>

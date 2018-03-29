@@ -28,7 +28,7 @@ namespace SimpleMediaplayer
         private static readonly DependencyProperty RotateAngleProperty = DependencyProperty.RegisterAttached("RotateAngle", typeof(double), typeof(PathButton),
         new PropertyMetadata(0));
         public Double RotateAngle
-        { 
+        {
             get { return (Double)GetValue(RotateAngleProperty); }
             set { SetValue(RotateAngleProperty, value); }
         }
@@ -40,7 +40,9 @@ namespace SimpleMediaplayer
         public String ShapeN
         {
             get { return (String)GetValue(ShapeNProperty); }
-            set { SetValue(ShapeNProperty, value);
+            set
+            {
+                SetValue(ShapeNProperty, value);
                 SetValue(ShapeRProperty, value);
                 SetValue(ShapePProperty, value);
                 SetValue(ShapeDProperty, value);
@@ -50,11 +52,13 @@ namespace SimpleMediaplayer
 
         #region 正常填充
         private static readonly DependencyProperty FillNProperty = DependencyProperty.RegisterAttached("FillN", typeof(Brush), typeof(PathButton),
-            new PropertyMetadata(""));
+            new PropertyMetadata(null));
         public Brush FillN
         {
             get { return (Brush)GetValue(FillNProperty); }
-            set { SetValue(FillNProperty, value);
+            set
+            {
+                SetValue(FillNProperty, value);
                 SetValue(FillRProperty, value);
                 SetValue(FillPProperty, value);
                 SetValue(FillDProperty, value);
@@ -68,7 +72,13 @@ namespace SimpleMediaplayer
         public Brush StrokeN
         {
             get { return (Brush)GetValue(StrokeNProperty); }
-            set { SetValue(StrokeNProperty, value); }
+            set
+            {
+                SetValue(StrokeNProperty, value);
+                SetValue(StrokeRProperty, value);
+                SetValue(StrokePProperty, value);
+                SetValue(StrokeDProperty, value);
+            }
         }
         #endregion
 

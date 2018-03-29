@@ -18,11 +18,12 @@ using Windows.ApplicationModel.Core;
 
 namespace SimpleMediaplayer
 {
-    public sealed class ControlBar : Control
+
+    public sealed class ControlBar : MediaTransportControls
     {
         #region 正在播放的文件名
-        public static readonly DependencyProperty FilenameProperty = DependencyProperty.RegisterAttached("Filename", typeof(String), typeof(ControlBar), new PropertyMetadata(""));
-
+        public static readonly DependencyProperty FilenameProperty = DependencyProperty.RegisterAttached("Filename", typeof(String), typeof(ControlBar),
+            new PropertyMetadata(""));
         public String Filename
         {
             get { return (String)this.GetValue(FilenameProperty); }

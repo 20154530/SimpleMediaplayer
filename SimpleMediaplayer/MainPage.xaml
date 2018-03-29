@@ -8,10 +8,6 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Viewbox Stretch="Uniform" MinWidth="100" MinHeight="100">
-            <Image Source="/Icon/Button/Mou2.jpg"/>
-        </Viewbox>
-        <local:YMediaPlayer x:Name="MediaPlayer" />
-        <Button Click="chang_Click"></Button>
+        <local:YMediaPlayer x:Name="MediaPlayer" MaxHeight="600" AreTransportControlsEnabled="True" AutoPlay="False" Source="ms-appx:///Assets/Cybran.wmv" />
     </Grid>
 </Page>
