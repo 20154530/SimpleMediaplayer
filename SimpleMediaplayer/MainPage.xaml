@@ -11,7 +11,7 @@
         <Viewbox Stretch="Uniform" MinWidth="100" MinHeight="100">
             <Image Source="/Icon/Button/Mou2.jpg"/>
         </Viewbox>
-        <local:ControlBar x:Name="ControlBar" />
+        <local:YMediaPlayer x:Name="MediaPlayer" />
         <Button Click="chang_Click"></Button>
     </Grid>
 </Page>

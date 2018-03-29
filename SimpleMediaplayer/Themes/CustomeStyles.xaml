@@ -3,20 +3,18 @@
                     xmlns:local="using:SimpleMediaplayer">
 
     <!--polylineButton-->
-    <Style x:Key="PolylineButton"
-           TargetType="local:PathButton">
+    <Style x:Key="PolylineButton" TargetType="local:PathButton">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PathButton">
                     <Viewbox Stretch="Uniform">
-                        <Canvas Width="100"
-                                Height="100">
-                            <Polyline x:Name="ButtonFg"
-                                      Points="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}"
-                                      Fill="{TemplateBinding Foreground}"
-                                      Stroke="{TemplateBinding Background}"
-                                      StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}"
-                                      Margin="20,0,0,0" />
+                        <Canvas Width="100" Height="100">
+                            <Polyline x:Name="ButtonFg" 
+                                  Points="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}" 
+                                  Stroke="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeN}" 
+                                  Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillN}" 
+                                  StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}" 
+                                  Opacity="1" />
                         </Canvas>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -24,33 +22,54 @@
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
-                                                                       Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="#aa0000" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Points">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeR}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillR}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
-                                                                       Storyboard.TargetProperty="Points">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Points">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeP}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg"
-                                                                       Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="#aa0000" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeP}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillP}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
-
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Points">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
                     </Viewbox>
                 </ControlTemplate>
             </Setter.Value>

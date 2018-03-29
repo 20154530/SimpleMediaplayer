@@ -29,7 +29,7 @@ namespace SimpleMediaplayer
 
         private void chang_Click(object sender, RoutedEventArgs e)
         {
-            ControlBar.Filename = "Stupid";
+            
         }
     }
 }

@@ -23,9 +23,8 @@
                             </Grid.ColumnDefinitions>
                             <local:PathButton Style="{StaticResource PolylineButton}" Width="20" Height="20" 
                                               ShapeN="37.3 0.09 3.71 33.68 0.18 37.21 3.71 40.75 37.3 74.33" 
-                                              ShapeR="37.3 0.09 3.71 33.68 0.18 37.21 3.71 40.75 37.3 74.33" 
-                                              ShapeP="37.3 0.09 3.71 33.68 0.18 37.21 3.71 40.75 37.3 74.33" 
-                                              StrokeSize="4" Background="Red" Margin="5,0,5,0" />
+                                              StrokeSize="4" 
+                                              Margin="5,0,5,0" />
                             <TextBlock x:Name="Filename" Foreground="{StaticResource DefaultControlBarText}" 
                                        FontSize="{StaticResource DefaultControlBarTextSize}" 
                                        Text="{TemplateBinding Filename}" 
@@ -37,14 +36,30 @@
                             <TextBlock x:Name="SysBattery" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding BatteryLevel}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="3" VerticalAlignment="Center" />
                         </Grid>
                         <RelativePanel x:Name="ControlBar" Grid.Row="1">
-                            <local:PathButton x:Name="PlayoPause" 
-                                              ShapeN="M50.4,47.35,141.6,100,50.4,152.65V47.35Z" 
-                                              ShapeR="M50.4,47.35,141.6,100,50.4,152.65V47.35Z" 
-                                              ShapeP="M50.4,47.35,141.6,100,50.4,152.65V47.35Z" 
-                                              StrokeSize="3" Background="Blue" Foreground="White" Width="60" Height="60"
+                            <local:PathButton x:Name="Play" 
+                                              ShapeN="M21,17.09,78,50,21,82.91V17.09Z"     
+                                              StrokeSize="4" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
+                                              FillN="Transparent" FillR="Transparent" FillP="Transparent" FillD="Transparent" RotateAngle="0"
+                                              Width="120" Height="120"
                                               RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
-                            <local:PathButton x:Name="Next"></local:PathButton>
-
+                            <local:PathButton x:Name="Pause" 
+                                              ShapeN="M21,17.09,78,50,21,82.91V17.09"     
+                                              StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
+                                              FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="0"
+                                              Width="120" Height="120"
+                                              RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
+                            <local:PathButton x:Name="Next" 
+                                              ShapeN="M21,17.09,78,50,21,82.91V17.09"     
+                                              StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
+                                              FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="0"
+                                              Width="60" Height="60"
+                                              RelativePanel.RightOf="Play" Margin="120,0,0,0" RelativePanel.AlignVerticalCenterWith="Play"/>
+                            <local:PathButton x:Name="Prve" 
+                                              ShapeN="M21,17.09,78,50,21,82.91V17.09"     
+                                              StrokeSize="3" StrokeN="Transparent" StrokeR="Transparent" StrokeP="Transparent" StrokeD="Transparent"
+                                              FillN="#c0ffffff" FillR="#ffffff" FillP="#aaffffff" FillD="#aaffffff" RotateAngle="180"
+                                              Width="60" Height="60"
+                                              RelativePanel.LeftOf="Play" Margin="0,0,120,0" RelativePanel.AlignVerticalCenterWith="Play"/>
                         </RelativePanel>
                         <Grid x:Name="SettingBar" Grid.Row="2">
 
@@ -60,9 +75,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PathButton">
-                    <Viewbox Stretch="Uniform">
-                        <Canvas Width="100" Height="100">
-                            <Path x:Name="ButtonFg" Data="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}" Stroke="{TemplateBinding Background}" Fill="{TemplateBinding Foreground}" StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}" Opacity="1" />
+                    <Viewbox Stretch="UniformToFill" UseLayoutRounding="True">
+                        <Canvas Width="100" Height="100" Background="{TemplateBinding Background}" RenderTransformOrigin=".5 .5">
+                            <Canvas.RenderTransform>
+                                <TransformGroup>
+                                    <TranslateTransform  X="{Binding RelativeSource={RelativeSource TemplatedParent},Path=TransX}" 
+                                                         Y="{Binding RelativeSource={RelativeSource TemplatedParent},Path=TransY}"/>
+                                    <RotateTransform Angle="{Binding RelativeSource={RelativeSource TemplatedParent},Path=RotateAngle}" />
+                                </TransformGroup>
+                            </Canvas.RenderTransform>
+                            <Path x:Name="ButtonFg" 
+                                  Data="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}" 
+                                  Stroke="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeN}" 
+                                  Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillN}" 
+                                  StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}" />
                         </Canvas>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -70,31 +96,81 @@
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Data">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                        </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#aa0000" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeR}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillR}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Data">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeP}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeP}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#aa0000" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillP}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
-
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Data">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonFg" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" 
+                                                                    Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillD}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
                     </Viewbox>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
+
+    <Style TargetType="local:YMediaPlayer" >
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:YMediaPlayer">
+                    <Grid x:Name="LayoutRoot">
+                        <Border Background="Transparent"/>
+                        <Image x:Name="PosterImage" Stretch="{TemplateBinding Stretch}" Source="{TemplateBinding PosterSource}" Visibility="Collapsed"/>
+                        <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
+                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                  MediaPlayer="{TemplateBinding MediaPlayer}"
+                                                  Stretch="{TemplateBinding Stretch}"/>
+                        <local:ControlBar x:Name="ControlBar" />
+                        <ContentPresenter x:Name="TransportControlsPresenter" Visibility="{TemplateBinding AreTransportControlsEnabled}"/>
+                        <Grid x:Name="TimedTextSourcePresenter"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
