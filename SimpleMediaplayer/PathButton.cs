@@ -34,6 +34,16 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        #region 使用背景
+        private static readonly DependencyProperty BGVisiblityProperty = DependencyProperty.RegisterAttached("BGVisiblity", typeof(Visibility), typeof(PathButton),
+        new PropertyMetadata(Visibility.Collapsed));
+        public Visibility BGVisiblity
+        {
+            get { return (Visibility)GetValue(BGVisiblityProperty); }
+            set { SetValue(BGVisiblityProperty, value); }
+        }
+        #endregion
+
         #region 正常图标
         private static readonly DependencyProperty ShapeNProperty = DependencyProperty.RegisterAttached("ShapeN", typeof(String), typeof(PathButton),
             new PropertyMetadata(""));
@@ -82,6 +92,22 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        #region 正常背景
+        private static readonly DependencyProperty BGNProperty = DependencyProperty.RegisterAttached("BGN", typeof(Brush), typeof(PathButton),
+        new PropertyMetadata(null));
+        public Brush BGN
+        {
+            get { return (Brush)GetValue(BGNProperty); }
+            set
+            {
+                SetValue(BGNProperty, value);
+                SetValue(BGRProperty, value);
+                SetValue(BGPProperty, value);
+                SetValue(BGDProperty, value);
+            }
+        }
+        #endregion
+
         #region 悬停图标
         private static readonly DependencyProperty ShapeRProperty = DependencyProperty.RegisterAttached("ShapeR", typeof(String), typeof(PathButton),
             new PropertyMetadata("M 30 30 L 70 70 M 70 30 L 30 70 "));
@@ -109,6 +135,16 @@ namespace SimpleMediaplayer
         {
             get { return (Brush)GetValue(StrokeRProperty); }
             set { SetValue(StrokeRProperty, value); }
+        }
+        #endregion
+
+        #region 悬停背景
+        private static readonly DependencyProperty BGRProperty = DependencyProperty.RegisterAttached("BGR", typeof(Brush), typeof(PathButton),
+        new PropertyMetadata(null));
+        public Brush BGR
+        {
+            get { return (Brush)GetValue(BGRProperty); }
+            set { SetValue(BGRProperty, value); }
         }
         #endregion
 
@@ -142,6 +178,16 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        #region 按下背景
+        private static readonly DependencyProperty BGPProperty = DependencyProperty.RegisterAttached("BGP", typeof(Brush), typeof(PathButton),
+        new PropertyMetadata(null));
+        public Brush BGP
+        {
+            get { return (Brush)GetValue(BGPProperty); }
+            set { SetValue(BGPProperty, value); }
+        }
+        #endregion
+
         #region 不可用图标
         private static readonly DependencyProperty ShapeDProperty = DependencyProperty.RegisterAttached("ShapeD", typeof(String), typeof(PathButton),
             new PropertyMetadata("M 30 30 L 70 70 M 70 30 L 30 70 "));
@@ -169,6 +215,16 @@ namespace SimpleMediaplayer
         {
             get { return (Brush)GetValue(StrokeDProperty); }
             set { SetValue(StrokeDProperty, value); }
+        }
+        #endregion
+
+        #region 不可用背景
+        private static readonly DependencyProperty BGDProperty = DependencyProperty.RegisterAttached("BGD", typeof(Brush), typeof(PathButton),
+        new PropertyMetadata(null));
+        public Brush BGD
+        {
+            get { return (Brush)GetValue(BGDProperty); }
+            set { SetValue(BGDProperty, value); }
         }
         #endregion
 

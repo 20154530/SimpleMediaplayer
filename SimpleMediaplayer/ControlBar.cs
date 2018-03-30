@@ -31,6 +31,12 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+        }
+
         protected override void OnTapped(TappedRoutedEventArgs e)
         {
             base.OnTapped(e);

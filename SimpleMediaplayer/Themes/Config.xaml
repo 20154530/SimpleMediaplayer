@@ -3,12 +3,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:SimpleMediaplayer">
 
-    <!--主体信息配置-->
+    <!--颜色配置-->
     <SolidColorBrush x:Key="DefaultMainPageBg" Color="#000000"/>
     <SolidColorBrush x:Key="DefaultControlBarBg" Color="#a0000000"/>
     <SolidColorBrush x:Key="DefaultControlBarText" Color="#c0ffffff"/>
     <SolidColorBrush x:Key="DefaultControlBarTextBg"
                      Color="#e0000000" />
+    
+    <!--大小配置-->
     <x:Double x:Key="DefaultControlBarTextSize">18</x:Double>
     
+    <!--样式配置-->
+    <x:String x:Key="MediaPlayer_Play" xml:space="preserve">M21,17.09,78,50,21,82.91V17.09Z</x:String>
+    <x:String x:Key="MediaPlayer_Pause" xml:space="preserve">M21,17.09 V 82.91 M 78,17.09 V 82.91</x:String>
+    <x:String x:Key="MediaPlayer_Next" xml:space="preserve">M14.5,17.09,71.5,50l-57,32.91V17.09 M 86,17.09V82.91</x:String>
+
 </ResourceDictionary>
