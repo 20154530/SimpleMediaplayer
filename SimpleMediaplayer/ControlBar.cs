@@ -22,8 +22,8 @@ namespace SimpleMediaplayer
     public sealed class ControlBar : MediaTransportControls
     {
         #region 正在播放的文件名
-        public static readonly DependencyProperty FilenameProperty = DependencyProperty.RegisterAttached("Filename", typeof(String), typeof(ControlBar),
-            new PropertyMetadata(""));
+        private static readonly DependencyProperty FilenameProperty = DependencyProperty.RegisterAttached("Filename", typeof(String), typeof(ControlBar),
+            new PropertyMetadata("No File Now !"));
         public String Filename
         {
             get { return (String)this.GetValue(FilenameProperty); }
@@ -134,7 +134,7 @@ namespace SimpleMediaplayer
         {
             double valuem = Convert.ToDouble(report.FullChargeCapacityInMilliwattHours);
             double valuen = Convert.ToDouble(report.RemainingCapacityInMilliwattHours);
-            BatteryLevel = String.Format("{0:N2} %", ((valuen / valuem) * 100));
+            BatteryLevel = String.Format("{0:F0} %", ((valuen / valuem) * 100));
         }
 
         private void RequestAggregateBatteryReport()

@@ -1,180 +1,276 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:SimpleMediaplayer">
-
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:SimpleMediaplayer">
     <!--Data-->
     <local:SystemInfo x:Key="Info" />
 
     <!--ControlBar-->
     <Style TargetType="local:ControlBar">
-        <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ControlBar">
-                    <Grid x:Name="RootPanel" DataContext="{StaticResource Info}" >
+                    <Grid x:Name="RootPanel" DataContext="{StaticResource Info}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ControlPanelVisibilityStates">
                                 <VisualState x:Name="ControlPanelFadeIn">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border" Storyboard.TargetProperty="Opacity">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                                        <DoubleAnimationUsingKeyFrames
+                                                Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="0" />
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3"
+                                                                  Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ControlPanelFadeOut">
                                     <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border" Storyboard.TargetProperty="Opacity">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                            <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0"/>
+                                        <DoubleAnimationUsingKeyFrames
+                                                Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="1" />
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.7"
+                                                                  Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border" Storyboard.TargetProperty="IsHitTestVisible">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
+                                        <ObjectAnimationUsingKeyFrames
+                                                Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border"
+                                                                       Storyboard.TargetProperty="IsHitTestVisible">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="False" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="MediaStates">
-                                <VisualState x:Name="Normal"/>
-                                <VisualState x:Name="Buffering">
-
-                                </VisualState>
-                                <VisualState x:Name="Loading">
-
-                                </VisualState>
-                                <VisualState x:Name="Error">
-
-                                </VisualState>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Buffering"></VisualState>
+                                <VisualState x:Name="Loading"></VisualState>
+                                <VisualState x:Name="Error"></VisualState>
                                 <VisualState x:Name="Disabled">
-                                    <Storyboard/>
+                                    <Storyboard />
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="PlayPauseStates">
-                                <VisualState x:Name="PlayState"/>
+                                <VisualState x:Name="PlayState" />
                                 <VisualState x:Name="PauseState">
                                     <VisualState.Setters>
-                                        <Setter Target="PlayPauseButton.ShapeN" Value="{StaticResource MediaPlayer_Pause}"/>
-                                        <Setter Target="PlayPauseButton.StrokeSize" Value="4"/>
+                                        <Setter Target="PlayPauseButton.ShapeN"
+                                                Value="{StaticResource MediaPlayer_Pause}" />
+                                        <Setter Target="PlayPauseButton.ShapeR"
+                                                Value="{StaticResource MediaPlayer_Pause}" />
+                                        <Setter Target="PlayPauseButton.ShapeP"
+                                                Value="{StaticResource MediaPlayer_Pause}" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="MediaTransportControlMode">
-                                <VisualState x:Name="NormalMode"/>
+                                <VisualState x:Name="NormalMode" />
                                 <VisualState x:Name="CompactMode">
                                     <VisualState.Setters>
-                                        <Setter Target="PlayPauseButton.Visibility" Value="Collapsed"/>
-                                        <Setter Target="PauseB.Visibility" Value="Collapsed"/>
+                                        <Setter Target="PlayPauseButton.Visibility"
+                                                Value="Collapsed" />
+                                        <Setter Target="PauseB.Visibility"
+                                                Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
-                            
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ControlPanel_ControlPanelVisibilityStates_Border" Background="{StaticResource DefaultControlBarBg}" Opacity="1">
+                        <Grid x:Name="ControlPanel_ControlPanelVisibilityStates_Border" Opacity="1">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="30" />
+                                <RowDefinition Height="20" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="30" />
                             </Grid.RowDefinitions>
-                            <Grid x:Name="StateBar" Grid.Row="0">
+                            <Grid x:Name="StatusBar" Background="{StaticResource StatusBar_Bg}" >
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="80"/>
                                     <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
-                                <local:PathButton Style="{StaticResource PolylineButton}" Width="20" Height="20" 
-                                                  ShapeN="37.3 0.09 3.71 33.68 0.18 37.21 3.71 40.75 37.3 74.33" StrokeSize="4" 
-                                                  Margin="5,0,5,0" />
-                                <TextBlock x:Name="Filename" Foreground="{StaticResource DefaultControlBarText}" 
-                                       FontSize="{StaticResource DefaultControlBarTextSize}" 
-                                       Text="{TemplateBinding Filename}" 
-                                       FontWeight="Light" Margin="10,0,10,0" 
-                                       Grid.Column="1" 
-                                       VerticalAlignment="Center" />
-                                <TextBlock x:Name="SysTime" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding HourMin}" FontWeight="Light" Margin="10,0,10,0" 
-                                           Grid.Column="2" VerticalAlignment="Center" TextAlignment="Center" />
-                                <Rectangle x:Name="Seperator" Grid.Column="3" Width="2" Height="18" VerticalAlignment="Center" Fill="{StaticResource DefaultControlBarText}"/>
-                                <TextBlock x:Name="SysBattery" Foreground="{StaticResource DefaultControlBarText}" FontSize="{StaticResource DefaultControlBarTextSize}" Text="{Binding BatteryLevel}" FontWeight="Light" Margin="10,0,10,0" Grid.Column="4" VerticalAlignment="Center" />
+                                <Ellipse x:Name="Item" Grid.Column="0" Fill="{StaticResource StatusBar_Seperator_bg}" Width="10" Height="10"
+                                         Margin="10,0,0,0" />
+                                <TextBlock x:Name="Filename" Grid.Column="1" Foreground="{StaticResource StatusBar_Text}" FontSize="{StaticResource StatusBar_Text_Size}"  
+                                           Text="{Binding  RelativeSource={RelativeSource TemplatedParent},Path=Filename}" FontWeight="Light" Margin="10,0,10,0" 
+                                           VerticalAlignment="Center" />
+                                <Line x:Name="Seperator1" Grid.Column="2" Stroke="{StaticResource StatusBar_Seperator_bg}" StrokeThickness="2" 
+                                      Y1="3"  Y2="17" StrokeDashArray="1,1" Margin="2,0,2,0" />
+                                <TextBlock x:Name="SysTime"  Grid.Column="3"
+                                           Foreground="{StaticResource StatusBar_Text}"
+                                           FontSize="{StaticResource StatusBar_Text_Size}"
+                                           Text="{Binding HourMin}"
+                                           FontWeight="Light"
+                                           Margin="2,0,2,0"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Center" />
+                                <Line x:Name="Seperator2" Grid.Column="4" Stroke="{StaticResource StatusBar_Seperator_bg}" StrokeThickness="2" 
+                                      Y1="3"  Y2="17" StrokeDashArray="1,1" Margin="2,0,2,0" />
+                                <TextBlock x:Name="SysBattery" Grid.Column="5"
+                                           Foreground="{StaticResource StatusBar_Text}"
+                                           FontSize="{StaticResource StatusBar_Text_Size}"
+                                           Text="{Binding BatteryLevel}"
+                                           TextAlignment="Center"
+                                           FontWeight="Light"
+                                           VerticalAlignment="Center" />
                             </Grid>
-                            <RelativePanel x:Name="ControlBar" Grid.Row="1">
-                                <local:PathButton x:Name="PlayPauseButton"
-                                              ShapeN="{StaticResource MediaPlayer_Play}"    
-                                              StrokeSize="4" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
-                                              FillN="Transparent" RotateAngle="0"
-                                              BGN="Transparent" BGR="#40ffffff"
-                                              Width="120" Height="120" Visibility="Visible"
-                                              RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
-                                <local:PathButton x:Name="NextB"
-                                              ShapeN="{StaticResource MediaPlayer_Next}"     
-                                              StrokeSize="3" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
-                                              FillN="Transparent" RotateAngle="0"
-                                              BGN="Transparent" BGR="#40ffffff"
-                                              Width="60" Height="60"
-                                              RelativePanel.RightOf="PlayPauseButton" Margin="200,0,0,0" RelativePanel.AlignVerticalCenterWith="PlayPauseButton"/>
-                                <local:PathButton x:Name="PrveB" 
-                                              ShapeN="{StaticResource MediaPlayer_Next}"   
-                                              StrokeSize="3" StrokeN="#c0ffffff" StrokeR="#ffffff" StrokeP="#aaffffff" StrokeD="#aaffffff"
-                                              FillN="Transparent" RotateAngle="180"
-                                              BGN="Transparent" BGR="#40ffffff"
-                                              Width="60" Height="60"
-                                              RelativePanel.LeftOf="PlayPauseButton" Margin="0,0,200,0" RelativePanel.AlignVerticalCenterWith="PlayPauseButton"/>
-                            </RelativePanel>
-                            <Grid x:Name="SettingBar" Grid.Row="2">
 
+                            <Grid x:Name="" Grid.Row="2">
+                                
                             </Grid>
+                            <RelativePanel x:Name="ControlBar"
+                                           Grid.Row="2">
+                                <Viewbox MaxHeight="120"
+                                         RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                         RelativePanel.AlignVerticalCenterWithPanel="True"
+                                         Stretch="Uniform">
+                                    <RelativePanel x:Name="ControlBar_Content"
+                                                   MinWidth="1400">
+                                        <local:PathButton x:Name="PlayPauseButton"
+                                                          ShapeN="{StaticResource MediaPlayer_Play}"
+                                                          StrokeSize="{StaticResource ControlBar_Content_PlayButton_StrokeSize}"
+                                                          StrokeN="{StaticResource ControlBar_Content_Button_Normal}"
+                                                          StrokeR="{StaticResource ControlBar_Content_Button_Rollover}"
+                                                          StrokeP="{StaticResource ControlBar_Content_Button_Pressed}"
+                                                          StrokeD="{StaticResource ControlBar_Content_Button_Disabled}"
+                                                          BGVisiblity="Visible"
+                                                          FillN="Transparent"
+                                                          RotateAngle="0"
+                                                          BGN="Transparent"
+                                                          BGR="{StaticResource MediaPlayer_Play_Bg}"
+                                                          Width="{StaticResource MediaPlayer_Play_Size}"
+                                                          Height="{StaticResource MediaPlayer_Play_Size}"
+                                                          Visibility="Visible"
+                                                          RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                                          RelativePanel.AlignVerticalCenterWithPanel="True" />
+                                        <local:PathButton x:Name="NextB"
+                                                          ShapeN="{StaticResource MediaPlayer_Next}"
+                                                          StrokeSize="{StaticResource ControlBar_Content_PreButton_StrokeSize}"
+                                                          StrokeN="{StaticResource ControlBar_Content_Button_Normal}"
+                                                          StrokeR="{StaticResource ControlBar_Content_Button_Rollover}"
+                                                          StrokeP="{StaticResource ControlBar_Content_Button_Pressed}"
+                                                          StrokeD="{StaticResource ControlBar_Content_Button_Disabled}"
+                                                          BGVisiblity="Visible"
+                                                          FillN="Transparent"
+                                                          RotateAngle="0"
+                                                          BGN="Transparent"
+                                                          BGR="{StaticResource MediaPlayer_Play_Bg}"
+                                                          Width="{StaticResource MediaPlayer_Pre_Size}"
+                                                          Height="{StaticResource MediaPlayer_Pre_Size}"
+                                                          RelativePanel.RightOf="PlayPauseButton"
+                                                          Margin="{StaticResource ControlBar_Content_Left}"
+                                                          RelativePanel.AlignVerticalCenterWith="PlayPauseButton" />
+                                        <local:PathButton x:Name="PrveB"
+                                                          ShapeN="{StaticResource MediaPlayer_Next}"
+                                                          StrokeSize="{StaticResource ControlBar_Content_PreButton_StrokeSize}"
+                                                          StrokeN="{StaticResource ControlBar_Content_Button_Normal}"
+                                                          StrokeR="{StaticResource ControlBar_Content_Button_Rollover}"
+                                                          StrokeP="{StaticResource ControlBar_Content_Button_Pressed}"
+                                                          StrokeD="{StaticResource ControlBar_Content_Button_Disabled}"
+                                                          BGVisiblity="Visible"
+                                                          FillN="Transparent"
+                                                          RotateAngle="180"
+                                                          BGN="Transparent"
+                                                          BGR="{StaticResource MediaPlayer_Play_Bg}"
+                                                          Width="{StaticResource MediaPlayer_Pre_Size}"
+                                                          Height="{StaticResource MediaPlayer_Pre_Size}"
+                                                          RelativePanel.LeftOf="PlayPauseButton"
+                                                          Margin="{StaticResource ControlBar_Content_Right}"
+                                                          RelativePanel.AlignVerticalCenterWith="PlayPauseButton" />
+                                        <local:PathButton x:Name="RecB"
+                                                          ShapeN="{StaticResource MediaPlayer_Rec}"
+                                                          StrokeSize="{StaticResource ControlBar_Content_PreButton_StrokeSize}"
+                                                          StrokeN="{StaticResource ControlBar_Content_Button_Normal}"
+                                                          StrokeR="{StaticResource ControlBar_Content_Button_Rollover}"
+                                                          StrokeP="{StaticResource ControlBar_Content_Button_Pressed}"
+                                                          StrokeD="{StaticResource ControlBar_Content_Button_Disabled}"
+                                                          BGVisiblity="Visible"
+                                                          Width="50" Height="50"
+                                                          FillN="Transparent"
+                                                          BGN="Transparent"
+                                                          BGR="{StaticResource MediaPlayer_Play_Bg}"
+                                                          Margin="{StaticResource ControlBar_Content_Right}"
+                                                          RelativePanel.LeftOf="PrveB" RelativePanel.AlignVerticalCenterWith="PlayPauseButton"/>
+                                    </RelativePanel>
+                                </Viewbox>
+                            </RelativePanel>
                         </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
     <!--PathButton-->
     <Style TargetType="local:PathButton">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PathButton">
-                    <Viewbox Stretch="UniformToFill" UseLayoutRounding="True">
-                        <Canvas Width="100" Height="100" RenderTransformOrigin=".5 .5">
+                    <Viewbox Stretch="UniformToFill"
+                             UseLayoutRounding="True">
+                        <Canvas Width="100"
+                                Height="100"
+                                RenderTransformOrigin=".5 .5">
                             <Canvas.RenderTransform>
                                 <TransformGroup>
-                                    <RotateTransform Angle="{Binding RelativeSource={RelativeSource TemplatedParent},Path=RotateAngle}" />
+                                    <RotateTransform
+                                            Angle="{Binding RelativeSource={RelativeSource TemplatedParent},Path=RotateAngle}" />
                                 </TransformGroup>
                             </Canvas.RenderTransform>
-                            <Path x:Name="ButtonFg" 
-                                  Data="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}" 
-                                  Stroke="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeN}" 
-                                  Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillN}" 
+                            <Path x:Name="ButtonFg"
+                                  Data="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeN}"
+                                  Stroke="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeN}"
+                                  Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillN}"
                                   StrokeThickness="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeSize}" />
-                            <Rectangle x:Name="PathButton_bg" Width="100" Height="100"
-                                       Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGN}"/>
+                            <Rectangle x:Name="PathButton_bg"
+                                       Width="100"
+                                       Height="100"
+                                       Visibility="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=BGVisiblity}"
+                                       Fill="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGN}" />
                         </Canvas>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                </VisualState>
+                                <VisualState x:Name="Normal"></VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="ButtonFg.Data" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}"/>
-                                        <Setter Target="ButtonFg.Stroke" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeR}"/>
-                                        <Setter Target="ButtonFg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillR}"/>
-                                        <Setter Target="PathButton_bg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGR}"/>
+                                        <Setter Target="ButtonFg.Data"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeR}" />
+                                        <Setter Target="ButtonFg.Stroke"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeR}" />
+                                        <Setter Target="ButtonFg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillR}" />
+                                        <Setter Target="PathButton_bg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGR}" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="ButtonFg.Data" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeP}"/>
-                                        <Setter Target="ButtonFg.Stroke" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeP}"/>
-                                        <Setter Target="ButtonFg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillP}"/>
-                                        <Setter Target="PathButton_bg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGP}"/>
+                                        <Setter Target="ButtonFg.Data"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeP}" />
+                                        <Setter Target="ButtonFg.Stroke"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeP}" />
+                                        <Setter Target="ButtonFg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillP}" />
+                                        <Setter Target="PathButton_bg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGP}" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="ButtonFg.Data" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeD}"/>
-                                        <Setter Target="ButtonFg.Stroke" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeD}"/>
-                                        <Setter Target="ButtonFg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillD}"/>
-                                        <Setter Target="PathButton_bg.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGD}"/>
+                                        <Setter Target="ButtonFg.Data"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=ShapeD}" />
+                                        <Setter Target="ButtonFg.Stroke"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=StrokeD}" />
+                                        <Setter Target="ButtonFg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=FillD}" />
+                                        <Setter Target="PathButton_bg.Fill"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent},Path=BGD}" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -184,24 +280,28 @@
             </Setter.Value>
         </Setter>
     </Style>
-
     <!--MeidaPlayer-->
-    <Style TargetType="local:YMediaPlayer" >
-        <Setter Property="AreTransportControlsEnabled" Value="True"/>
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="IsTabStop" Value="False"/>
+    <Style TargetType="local:YMediaPlayer">
+        <Setter Property="AreTransportControlsEnabled"
+                Value="True" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:YMediaPlayer">
                     <Grid x:Name="LayoutRoot">
-                        <Border Background="Transparent"/>
+                        <Border Background="Transparent" />
                         <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
-                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
-                                                  MediaPlayer="{TemplateBinding MediaPlayer}"
-                                                  Stretch="{TemplateBinding Stretch}"/>
-                        <ContentPresenter x:Name="TransportControlsPresenter" Visibility="{TemplateBinding AreTransportControlsEnabled}"/>
-                        <Grid x:Name="TimedTextSourcePresenter"/>
+                                              IsFullWindow="{TemplateBinding IsFullWindow}"
+                                              MediaPlayer="{TemplateBinding MediaPlayer}"
+                                              Stretch="{TemplateBinding Stretch}" />
+                        <ContentPresenter x:Name="TransportControlsPresenter"
+                                          Visibility="{TemplateBinding AreTransportControlsEnabled}" />
+                        <Grid x:Name="TimedTextSourcePresenter" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

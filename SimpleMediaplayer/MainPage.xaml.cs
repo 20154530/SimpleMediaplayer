@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -22,9 +24,24 @@ namespace SimpleMediaplayer
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        StatusBar Statusbar;
+
         public MainPage()
         {
+            CheckStatusBar();
             this.InitializeComponent();
+
+
+        }
+
+        private async void CheckStatusBar()
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                Statusbar = StatusBar.GetForCurrentView();
+                Statusbar.BackgroundOpacity = 0;
+                await Statusbar.HideAsync();
+            }
         }
     }
 }
