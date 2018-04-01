@@ -32,6 +32,7 @@ namespace SimpleMediaplayer
         #endregion
 
 
+
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -40,7 +41,6 @@ namespace SimpleMediaplayer
         protected override void OnTapped(TappedRoutedEventArgs e)
         {
             base.OnTapped(e);
-        //    this.Visibility = this.Visibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public ControlBar()

@@ -7,24 +7,27 @@
     <SolidColorBrush x:Key="StatusBar_Bg" Color="#80000000" />
     <SolidColorBrush x:Key="StatusBar_Text" Color="#80ffffff" />
     <SolidColorBrush x:Key="StatusBar_Seperator_bg" Color="#80ffffff"/>
-    
-    <SolidColorBrush x:Key="ControlBar_Content_Button_Normal" Color="#c0ffffff" />
-    <SolidColorBrush x:Key="ControlBar_Content_Button_Rollover" Color="#ffffff" />
-    <SolidColorBrush x:Key="ControlBar_Content_Button_Pressed" Color="#aaffffff" />
-    <SolidColorBrush x:Key="ControlBar_Content_Button_Disabled" Color="#aaffffff" />
 
-    <SolidColorBrush x:Key="MediaPlayer_Play_Bg" Color="#40ffffff" />
+    <SolidColorBrush x:Key="ControlBar_Thumb_N" Color="#40ffffff"/>
+    <SolidColorBrush x:Key="ControlBar_Thumb_R" Color="#f0ffffff"/>
+    <SolidColorBrush x:Key="ControlBar_Thumb_P" Color="#80ffffff"/>
+    <SolidColorBrush x:Key="ControlBar_Thumb_D" Color="#00ffffff"/>
+    
+    <SolidColorBrush x:Key="ControlBar_Track_N" Color="#20000000"/>
+    <SolidColorBrush x:Key="ControlBar_Track_R" Color="#30000000"/>
+    <SolidColorBrush x:Key="ControlBar_Track_P" Color="#40000000"/>
+    <SolidColorBrush x:Key="ControlBar_Track_D" Color="#00000000"/>
+
+    <SolidColorBrush x:Key="ControlBar_Decrease_N" Color="#20000000"/>
+    <SolidColorBrush x:Key="ControlBar_Decrease_R" Color="#30000000"/>
+    <SolidColorBrush x:Key="ControlBar_Decrease_P" Color="#40000000"/>
+    <SolidColorBrush x:Key="ControlBar_Decrease_D" Color="#00000000"/>
 
 
     <!--大小配置-->
     <x:Double x:Key="StatusBar_Text_Size">14.5</x:Double>
-    <x:Double x:Key="MediaPlayer_Play_Size">120</x:Double>
-    <x:Double x:Key="MediaPlayer_Pre_Size">60</x:Double>
-    <x:Double x:Key="ControlBar_Content_PlayButton_StrokeSize">4</x:Double>
-    <x:Double x:Key="ControlBar_Content_PreButton_StrokeSize">4</x:Double>
-    <Thickness x:Key="ControlBar_Content_Right">0,0,180,0</Thickness>
-    <Thickness x:Key="ControlBar_Content_Left">180,0,0,0</Thickness>
-    
+    <x:Double x:Key="ControlBar_Progress_Height">10</x:Double>
+
     <!--样式配置-->
     <x:String x:Key="StatusBar_Back" xml:space="preserve">M 58 ,22.29 L 42 ,50 L 58 ,77.71</x:String>
     <x:String x:Key="MediaPlayer_Play" xml:space="preserve">M21,17.09,78,50,21,82.91V17.09Z</x:String>
