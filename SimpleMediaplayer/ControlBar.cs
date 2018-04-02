@@ -14,27 +14,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
-
+using Windows.Media.Core;
 
 namespace SimpleMediaplayer
 {
 
     public sealed class ControlBar : MediaTransportControls
     {
-        #region 正在播放的文件名
-        private static readonly DependencyProperty FilenameProperty = DependencyProperty.RegisterAttached("Filename", typeof(String), typeof(ControlBar),
-            new PropertyMetadata("No File Now !"));
-        public String Filename
-        {
-            get { return (String)this.GetValue(FilenameProperty); }
-            set { this.SetValue(FilenameProperty, value); }
-        }
-        #endregion
-
-
 
         protected override void OnApplyTemplate()
         {
+            var OpenFileButton = GetTemplateChild("OpenFile") as Button;
+            OpenFileButton.Click += OpenFileButton_Click;
             base.OnApplyTemplate();
         }
 
@@ -42,6 +33,22 @@ namespace SimpleMediaplayer
         {
             base.OnTapped(e);
         }
+
+        private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
+            picker.FileTypeFilter.Add(".mp3");
+            picker.FileTypeFilter.Add(".mp4");
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+               ((TextBlock)GetTemplateChild("Filename")).Text = file.Name;
+                var mediasource = MediaSource.CreateFromStorageFile(file);
+                SystemInfo.MediaRes.MediaPlayer.Source = mediasource;
+            }
+        }
+
 
         public ControlBar()
         {
@@ -53,6 +60,15 @@ namespace SimpleMediaplayer
     public class SystemInfo : INotifyPropertyChanged //系统信息
     {
         private DateTime time;
+
+        public static SystemInfo MediaRes = new SystemInfo();
+
+        private MediaPlayerElement mediaPlayer;
+        public MediaPlayerElement MediaPlayer
+        {
+            get { return mediaPlayer; }
+            set { mediaPlayer = value; }
+        }
 
         #region 时间元素
         private int hour, min, sec;
@@ -98,7 +114,7 @@ namespace SimpleMediaplayer
             }
         }
 
-        private String batteryLevel;//电量 格式 DD.D%
+        private String batteryLevel;//电量 格式 DD%
         public String BatteryLevel
         {
             get { return batteryLevel; }

@@ -34,18 +34,20 @@ namespace SimpleMediaplayer
         #endregion
 
 
-
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
             base.OnPointerEntered(e);
         }
 
-
+        protected override void OnApplyTemplate()
+        {
+            this.TransportControls = new ControlBar();
+            base.OnApplyTemplate();
+        }
 
         public YMediaPlayer()
         {
             this.DefaultStyleKey = typeof(YMediaPlayer);
-            this.TransportControls = new ControlBar();
         }
     }
 }

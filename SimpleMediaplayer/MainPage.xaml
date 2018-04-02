@@ -8,8 +8,6 @@
     mc:Ignorable="d" MinHeight="108" MinWidth="192" >
 
     <Grid Background="Black">
-        <Image Source="/Icon/Button/Mou2.jpg"/>
-        <local:YMediaPlayer x:Name="MediaPlayer" MinHeight="108" MinWidth="192" AreTransportControlsEnabled="True" AutoPlay="False"
-                            />
+        <local:YMediaPlayer x:Name="MediaPlayer" MinHeight="108" MinWidth="192" AreTransportControlsEnabled="True" AutoPlay="False" />
     </Grid>
 </Page>
