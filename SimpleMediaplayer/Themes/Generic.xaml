@@ -394,6 +394,7 @@
                                     <VisualState.Setters>
                                         <Setter Target="PlayPauseSymbolLeft.Symbol" Value="Pause"/>
                                         <Setter Target="PlayPauseSymbol.Symbol" Value="Pause"/>
+                                        <Setter Target="FileTypeIcon.Symbol" Value="Play"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -434,22 +435,23 @@
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Grid x:Name="StatusBar" Background="{StaticResource StatusBar_Bg}" DataContext="{StaticResource Info}" >
+                            <Grid x:Name="StatusBar" Background="{StaticResource StatusBar_Bg}" DataContext="{StaticResource Info}" UseLayoutRounding="True">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="20"/>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="60"/>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="60"/>
                                 </Grid.ColumnDefinitions>
-                                <Ellipse x:Name="Item" Grid.Column="0" Fill="{StaticResource StatusBar_Seperator_bg}" Width="8" Height="8"
-                                         Margin="10,0,0,0" />
+                                <Viewbox Width="12" Height="12" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                    <SymbolIcon x:Name="FileTypeIcon" Symbol="Pause" Foreground="{StaticResource ControlBar_Text}"/>
+                                </Viewbox>
                                 <TextBlock x:Name="Filename" Grid.Column="1" Foreground="{StaticResource StatusBar_Text}" FontSize="{StaticResource StatusBar_Text_Size}"  
                                            Text="No FIle !" FontWeight="Light" Margin="10,0,10,0" 
                                            VerticalAlignment="Center" />
                                 <Line x:Name="Seperator1" Grid.Column="2" Stroke="{StaticResource StatusBar_Seperator_bg}" StrokeThickness="2" 
-                                      Y1="3"  Y2="17" StrokeDashArray="1,1" Margin="2,0,2,0" />
+                                      Y1="3"  Y2="17"  Margin="2,0,2,0" />
                                 <TextBlock x:Name="SysTime"  Grid.Column="3"
                                            Foreground="{StaticResource StatusBar_Text}"
                                            FontSize="{StaticResource StatusBar_Text_Size}"
@@ -459,7 +461,7 @@
                                            VerticalAlignment="Center"
                                            TextAlignment="Center" />
                                 <Line x:Name="Seperator2" Grid.Column="4" Stroke="{StaticResource StatusBar_Seperator_bg}" StrokeThickness="2" 
-                                      Y1="3"  Y2="17" StrokeDashArray="1,1" Margin="2,0,2,0" />
+                                      Y1="3"  Y2="17" Margin="2,0,2,0" />
                                 <TextBlock x:Name="SysBattery" Grid.Column="5"
                                            Foreground="{StaticResource StatusBar_Text}"
                                            FontSize="{StaticResource StatusBar_Text_Size}"
@@ -584,8 +586,7 @@
                                                 <SymbolIcon x:Name="RepeatSymbol" Symbol="RepeatOne"  Foreground="{StaticResource ControlBar_Text}"/>
                                             </AppBarToggleButton.Icon>
                                         </AppBarToggleButton>
-                                        <AppBarButton x:Name="ZoomButton" MediaTransportControlsHelper.DropoutOrder="9" Style="{StaticResource AppBarButtonStyle}"
-                                                      >
+                                        <AppBarButton x:Name="ZoomButton" MediaTransportControlsHelper.DropoutOrder="9" Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="&#xE799;" Foreground="{StaticResource ControlBar_Text}"/>
                                             </AppBarButton.Icon>
