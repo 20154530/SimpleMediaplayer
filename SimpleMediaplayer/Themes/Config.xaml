@@ -6,7 +6,7 @@
 
     <SolidColorBrush x:Key="StatusBar_Bg" Color="#a0000000" />
     <SolidColorBrush x:Key="StatusBar_Text" Color="#80ffffff" />
-    <SolidColorBrush x:Key="StatusBar_Seperator_bg" Color="#80ffffff"/>
+    <SolidColorBrush x:Key="StatusBar_Seperator_bg" Color="#60ffffff"/>
 
     <SolidColorBrush x:Key="ControlBar_Thumb_N" Color="#60ffffff"/>
     <SolidColorBrush x:Key="ControlBar_Thumb_R" Color="#ffffffff"/>
@@ -23,11 +23,11 @@
     <SolidColorBrush x:Key="ControlBar_Decrease_P" Color="#40ffffff"/>
     <SolidColorBrush x:Key="ControlBar_Decrease_D" Color="#00000000"/>
 
-    <SolidColorBrush x:Key="ControlBar_Flyout_Bg" Color="#e0000000" />
+    <SolidColorBrush x:Key="ControlBar_Flyout_Bg" Color="#00000000" />
     <SolidColorBrush x:Key="ControlBar_Text" Color="#b0ffffff" />
 
     <!--大小配置-->
-    <x:Double x:Key="StatusBar_Text_Size">14.5</x:Double>
+    <x:Double x:Key="StatusBar_Text_Size">14</x:Double>
     <x:Double x:Key="ControlBar_Progress_Height">10</x:Double>
     
 
