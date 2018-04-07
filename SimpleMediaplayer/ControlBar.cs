@@ -22,7 +22,7 @@ namespace SimpleMediaplayer
 
     public sealed class ControlBar : MediaTransportControls
     {
-        private ListView PlayListControl;
+        private PlayList PlayListControl;
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -44,6 +44,13 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
+        {
+            var VolumSlider = GetTemplateChild("VolumeSlider") as Slider;
+            VolumSlider.ManipulationCompleted += VolumSlider_OnManipulationCompleted;
+            base.OnManipulationCompleted(e);
+        }
+
         protected override void OnApplyTemplate()
         {
             var OpenFileButton = GetTemplateChild("OpenFile") as Button;
@@ -52,7 +59,7 @@ namespace SimpleMediaplayer
             OpenPlayList.Click += OpenPlayList_Click;
             var VolumSlider = GetTemplateChild("VolumeSlider") as Slider;
             VolumSlider.ValueChanged += VolumSlider_OnValueChange;
-            PlayListControl = GetTemplateChild("PlayList") as ListView;
+            PlayListControl = GetTemplateChild("PlayList") as PlayList;
             base.OnApplyTemplate();
         }
 
@@ -61,9 +68,20 @@ namespace SimpleMediaplayer
             base.OnTapped(e);
         }
 
+        #region PlayList
         private void OpenPlayList_Click(object sender, RoutedEventArgs args)
         {
+            if(PlayListControl.IsPlaylistVisible)
+                VisualStateManager.GoToState(this, "PlayListHide", true);
+            else
+                VisualStateManager.GoToState(this, "PlayListShow", true);
+        }
+        #endregion
 
+        #region VolumSlider
+        private void VolumSlider_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            (sender as Slider).Value = 50;
         }
 
         private void VolumSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)
@@ -73,6 +91,7 @@ namespace SimpleMediaplayer
             else
                 VisualStateManager.GoToState(this, "VolumeState", false);
         }
+        #endregion
 
         private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
         {

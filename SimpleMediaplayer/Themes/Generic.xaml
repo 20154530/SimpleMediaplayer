@@ -630,6 +630,24 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="PlayListState">
+                                <VisualState x:Name="PlayListShow">
+                                    <Storyboard x:Name="PlayListShowAni">
+                                        <DoubleAnimation Storyboard.TargetName="PlayList" Storyboard.TargetProperty="Opacity" Duration="0:0:1" To="1"/>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="PlayList.IsPlaylistVisible" Value="true"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PlayListHide">
+                                    <Storyboard x:Name="PlayListHideAni">
+                                        <DoubleAnimation Storyboard.TargetName="PlayList" Storyboard.TargetProperty="Opacity" Duration="0:0:1" To="0"/>
+                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="PlayList.IsPlaylistVisible" Value="false"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="ControlPanel_ControlPanelVisibilityStates_Border">
                             <Grid.RowDefinitions>
@@ -670,7 +688,8 @@
                                       Grid.Column="2"
                                       Stroke="{StaticResource StatusBar_Seperator_bg}"
                                       StrokeThickness="1"
-                                      Y2="20"
+                                      Y1="1"
+                                      Y2="19"
                                       Margin="2,0,2,0" />
                                 <TextBlock x:Name="SysTime"
                                            Grid.Column="3"
@@ -685,7 +704,8 @@
                                       Grid.Column="4"
                                       Stroke="{StaticResource StatusBar_Seperator_bg}"
                                       StrokeThickness="1"
-                                      Y2="20"
+                                       Y1="1"
+                                      Y2="19"
                                       Margin="2,0,2,0" />
                                 <TextBlock x:Name="SysBattery"
                                            Grid.Column="5"
@@ -696,14 +716,12 @@
                                            FontWeight="Light"
                                            VerticalAlignment="Center" />
                             </Grid>
-                            <Grid x:Name="FlyoutLayer"
-                                  Grid.Row="1">
+                            <Grid x:Name="FlyoutLayer" Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <local:PlayList x:Name="PlayList" 
-                                          MinWidth="50" Background="#a0000000">
+                                <local:PlayList x:Name="PlayList" Background="#a0000000" Opacity="0" IsPlaylistVisible="False">
                                     <ListViewItem>
                                         <Rectangle Fill="Black" Width="100" />
                                     </ListViewItem>
@@ -934,7 +952,7 @@
                                                          Height="0"
                                                          Margin="0,0"
                                                          Width="0" />
-                                        <AppBarToggleButton x:Name="RepeatButton"
+                                        <!--<AppBarToggleButton x:Name="RepeatButton"
                                                             MediaTransportControlsHelper.DropoutOrder="1"
                                                             Style="{StaticResource AppBarToggleButtonStyle}"
                                                             Visibility="Visible">
@@ -943,7 +961,7 @@
                                                             Symbol="RepeatOne"
                                                             Foreground="{StaticResource ControlBar_Text}" />
                                             </AppBarToggleButton.Icon>
-                                        </AppBarToggleButton>
+                                        </AppBarToggleButton>-->
                                         <AppBarButton x:Name="ZoomButton"
                                                       MediaTransportControlsHelper.DropoutOrder="9"
                                                       Style="{StaticResource AppBarButtonStyle}">

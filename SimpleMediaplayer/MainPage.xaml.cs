@@ -87,5 +87,9 @@ namespace SimpleMediaplayer
             });
         }
 
+        private void RootPage_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+
+        }
     }
 }

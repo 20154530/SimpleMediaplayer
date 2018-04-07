@@ -720,90 +720,6 @@
                                               Glyph="&#xE0E4;" />
                                 </Grid>
                             </ControlTemplate>
-                            <ControlTemplate x:Key="VerticalThumbTemplate"
-                                             TargetType="Thumb">
-                                <Rectangle x:Name="ThumbVisual"
-                                           Fill="{TemplateBinding Background}">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal" />
-                                            <VisualState x:Name="PointerOver">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillPointerOver}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Pressed">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillPressed}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Disabled">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillDisabled}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <DoubleAnimation Duration="0"
-                                                                     Storyboard.TargetName="ThumbVisual"
-                                                                     Storyboard.TargetProperty="Opacity"
-                                                                     To="0" />
-                                                </Storyboard>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Rectangle>
-                            </ControlTemplate>
-                            <ControlTemplate x:Key="HorizontalThumbTemplate"
-                                             TargetType="Thumb">
-                                <Rectangle x:Name="ThumbVisual"
-                                           Fill="{TemplateBinding Background}">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal" />
-                                            <VisualState x:Name="PointerOver">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillPointerOver}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Pressed">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillPressed}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Disabled">
-                                                <Storyboard>
-                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
-                                                                                   Storyboard.TargetProperty="Fill">
-                                                        <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                Value="{ThemeResource ScrollBarThumbFillDisabled}" />
-                                                    </ObjectAnimationUsingKeyFrames>
-                                                    <DoubleAnimation Duration="0"
-                                                                     Storyboard.TargetName="ThumbVisual"
-                                                                     Storyboard.TargetProperty="Opacity"
-                                                                     To="0" />
-                                                </Storyboard>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Rectangle>
-                            </ControlTemplate>
                         </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -1347,7 +1263,7 @@
                                    Opacity="0"
                                    RenderTransformOrigin="1,0.5"
                                    Grid.Row="2"
-                                   Template="{StaticResource VerticalThumbTemplate}"
+                                   Style="{StaticResource DarkThumbStyle}"
                                    Width="{ThemeResource ScrollBarSize}">
                                 <Thumb.RenderTransform>
                                     <CompositeTransform x:Name="VerticalThumbTransform"
