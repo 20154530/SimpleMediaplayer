@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Media.Playback;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
@@ -13,6 +14,16 @@ namespace SimpleMediaplayer
 {
     public sealed class YMediaPlayer : MediaPlayerElement
     {
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            base.OnTapped(e);
+            
+        }
+
+        protected override void OnPointerMoved(PointerRoutedEventArgs e)
+        {
+            
+        }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
         {
@@ -21,7 +32,6 @@ namespace SimpleMediaplayer
 
         protected override void OnApplyTemplate()
         {
-            this.TransportControls = new ControlBar();
             base.OnApplyTemplate();
         }
 

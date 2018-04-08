@@ -100,6 +100,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PlayList.cs" />
+    <Compile Include="SidePanel.cs" />
+    <Compile Include="YCommandBar.cs" />
     <Compile Include="YMediaPlayer.cs" />
     <Compile Include="PathButton.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

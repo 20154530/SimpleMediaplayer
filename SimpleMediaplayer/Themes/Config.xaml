@@ -29,14 +29,10 @@
     <!--大小配置-->
     <x:Double x:Key="StatusBar_Text_Size">14</x:Double>
     <x:Double x:Key="ControlBar_Progress_Height">10</x:Double>
-    
+    <x:Double x:Key="PlayList_IconSize">22</x:Double>
+    <x:String x:Key="PlayList_IconPadding">4</x:String>
+
 
     <!--样式配置-->
-    <x:String x:Key="StatusBar_Back" xml:space="preserve">M 58 ,22.29 L 42 ,50 L 58 ,77.71</x:String>
-    <x:String x:Key="MediaPlayer_Play" xml:space="preserve">M21,17.09,78,50,21,82.91V17.09Z</x:String>
-    <x:String x:Key="MediaPlayer_Pause" xml:space="preserve">M21,17.09 V 82.91 M 78,17.09 V 82.91</x:String>
-    <x:String x:Key="MediaPlayer_Next" xml:space="preserve">M14.5,17.09,71.5,50l-57,32.91V17.09 M 86,17.09V82.91</x:String>
-    <x:String x:Key="MediaPlayer_Rec"
-              xml:space="preserve">M81,35a36,36,0,0,1,3.56,15A34.56,34.56,0,1,1,50,15.44 M 80.95,34.47 L 74.82,47.7</x:String>
     
 </ResourceDictionary>

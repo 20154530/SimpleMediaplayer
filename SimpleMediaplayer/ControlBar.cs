@@ -2,17 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls.Primitives;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Diagnostics;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Devices.Power;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using Windows.Media.Core;
@@ -20,9 +15,10 @@ using Windows.Media.Core;
 namespace SimpleMediaplayer
 {
 
-    public sealed class ControlBar : MediaTransportControls
+    public sealed class ControlBar : Control
     {
         private PlayList PlayListControl;
+        private CommandBar MediaControlsCommandBar;
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -31,6 +27,16 @@ namespace SimpleMediaplayer
         {
             get { return (String)this.GetValue(NowPlayProperty); }
             set { this.SetValue(NowPlayProperty, value); }
+        }
+        #endregion
+
+        #region 关联播放器
+        private static readonly DependencyProperty AttachedMediaPlayerProperty = DependencyProperty.RegisterAttached("AttachedMediaPlayer", typeof(MediaPlayer), typeof(ControlBar),
+            new PropertyMetadata(null));
+        public MediaPlayer AttachedMediaPlayer
+        {
+            get { return (MediaPlayer)this.GetValue(AttachedMediaPlayerProperty); }
+            set { this.SetValue(AttachedMediaPlayerProperty, value); }
         }
         #endregion
 
@@ -44,42 +50,72 @@ namespace SimpleMediaplayer
         }
         #endregion
 
-        protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
+        #region 重写
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var VolumSlider = GetTemplateChild("VolumeSlider") as Slider;
-            VolumSlider.ManipulationCompleted += VolumSlider_OnManipulationCompleted;
-            base.OnManipulationCompleted(e);
+            VisualStateManager.GoToState(this, "PlayListHide", false);
+           
         }
 
         protected override void OnApplyTemplate()
         {
             var OpenFileButton = GetTemplateChild("OpenFile") as Button;
             OpenFileButton.Click += OpenFileButton_Click;
+
             var OpenPlayList = GetTemplateChild("OpenPlayList") as Button;
             OpenPlayList.Click += OpenPlayList_Click;
+
             var VolumSlider = GetTemplateChild("VolumeSlider") as Slider;
             VolumSlider.ValueChanged += VolumSlider_OnValueChange;
+            VolumSlider.Loaded += VolumSlider_OnLoaded;
+
+            var PlayPauseButton = GetTemplateChild("PlayPauseButton") as AppBarButton;
+            PlayPauseButton.Click += PlayPauseButton_Click;
+
+            MediaControlsCommandBar = GetTemplateChild("MediaControlsCommandBar") as CommandBar;
+
             PlayListControl = GetTemplateChild("PlayList") as PlayList;
+
             base.OnApplyTemplate();
         }
 
         protected override void OnTapped(TappedRoutedEventArgs e)
         {
-            base.OnTapped(e);
+
+
         }
+        #endregion
+
+        #region PlayPause
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(AttachedMediaPlayer.TimelineController.State.Equals(Windows.Media.MediaTimelineControllerState.Paused))
+            {
+                
+            }
+            
+        }
+        #endregion
+
+        #region ControlBlank
+
+        #endregion
 
         #region PlayList
-        private void OpenPlayList_Click(object sender, RoutedEventArgs args)
+        private void OpenPlayList_Click(object sender, RoutedEventArgs e)
         {
-            if(PlayListControl.IsPlaylistVisible)
-                VisualStateManager.GoToState(this, "PlayListHide", true);
+            if (PlayListControl.IsPlaylistVisible)
+                VisualStateManager.GoToState(this, "PlayListHide", false);
             else
-                VisualStateManager.GoToState(this, "PlayListShow", true);
+                VisualStateManager.GoToState(this, "PlayListShow", false);
+
+            PlayListControl.IsPlaylistVisible = !PlayListControl.IsPlaylistVisible;
         }
         #endregion
 
         #region VolumSlider
-        private void VolumSlider_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void VolumSlider_OnLoaded(object sender, RoutedEventArgs e)
         {
             (sender as Slider).Value = 50;
         }
@@ -87,7 +123,7 @@ namespace SimpleMediaplayer
         private void VolumSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (e.NewValue == 0)
-                VisualStateManager.GoToState(this, "MuteState", true);
+                VisualStateManager.GoToState(this, "MuteState", false);
             else
                 VisualStateManager.GoToState(this, "VolumeState", false);
         }
@@ -104,15 +140,19 @@ namespace SimpleMediaplayer
             {
                 NowPlay = file[0].Name;
                 var mediasource = MediaSource.CreateFromStorageFile(file[0]);
-                SystemInfo.MediaRes.MediaPlayer.Source = mediasource;
+               
             }
         }
 
-
+        public void SetMediaPlayer (MediaPlayer player)
+        {
+            AttachedMediaPlayer = player;
+        }
 
         public ControlBar()
         {
             this.DefaultStyleKey = typeof(ControlBar);
+            this.Loaded += OnLoaded;
         }
 
     }
@@ -124,18 +164,22 @@ namespace SimpleMediaplayer
         public Image FileScaledImage { get; set; }
     }
 
+    public class WidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return -(double)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class SystemInfo : INotifyPropertyChanged //系统信息
     {
         private DateTime time;
-
-        public static SystemInfo MediaRes = new SystemInfo();
-
-        private MediaPlayerElement mediaPlayer;
-        public MediaPlayerElement MediaPlayer
-        {
-            get { return mediaPlayer; }
-            set { mediaPlayer = value; }
-        }
 
         #region 时间元素
         private int hour, min, sec;

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
+using Windows.Media.Playback;
+using System.Diagnostics;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
@@ -14,6 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 
@@ -28,13 +31,24 @@ namespace SimpleMediaplayer
     {
         private StatusBar _Statusbar;
         private SimpleOrientationSensor _Simpleorientationsensor;
+        private MediaPlayer _PlayerCore;
 
         public MainPage()
         {
             CheckStatusBar();
-            SetOrientation();
+            SetOrientation();     
             this.InitializeComponent();
-            SystemInfo.MediaRes.MediaPlayer = MediaPlayer;
+            setMediaPlayer();
+        }
+
+
+        private void setMediaPlayer()
+        {
+            _PlayerCore = new MediaPlayer();
+            _PlayerCore.CommandManager.IsEnabled = false;
+            _PlayerCore.TimelineController = new Windows.Media.MediaTimelineController();
+            MediaPlayer.SetMediaPlayer(_PlayerCore);
+            MediaPlayer_ControlBar.SetMediaPlayer(_PlayerCore);
         }
 
         private async void CheckStatusBar()
@@ -66,30 +80,26 @@ namespace SimpleMediaplayer
 
                         break;
                     case SimpleOrientation.Rotated90DegreesCounterclockwise:
-                       
+
                         break;
                     case SimpleOrientation.Rotated180DegreesCounterclockwise:
-                        
+
                         break;
                     case SimpleOrientation.Rotated270DegreesCounterclockwise:
-                       
+
                         break;
                     case SimpleOrientation.Faceup:
-                       
+
                         break;
                     case SimpleOrientation.Facedown:
-                     
+
                         break;
                     default:
-                     
+
                         break;
                 }
             });
         }
 
-        private void RootPage_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-
-        }
     }
 }

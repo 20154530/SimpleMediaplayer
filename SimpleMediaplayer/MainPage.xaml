@@ -6,10 +6,11 @@
     xmlns:local="using:SimpleMediaplayer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" MinHeight="108" MinWidth="192" ManipulationCompleted="RootPage_ManipulationCompleted">
+    mc:Ignorable="d" >
 
-    <Grid Background="Black">
+    <Grid x:Name="RootPanel" Background="Black">
         <Image Source="/Assets/Mou1.jpg" />
-        <local:YMediaPlayer x:Name="MediaPlayer" MinHeight="108" MinWidth="192" AreTransportControlsEnabled="True" AutoPlay="False" />
+        <local:YMediaPlayer x:Name="MediaPlayer" AreTransportControlsEnabled="False" Stretch="Uniform"/>
+        <local:ControlBar x:Name="MediaPlayer_ControlBar" />
     </Grid>
 </Page>
