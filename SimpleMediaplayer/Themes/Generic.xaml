@@ -546,8 +546,6 @@
                                 <VisualState x:Name="PlayState" />
                                 <VisualState x:Name="PauseState">
                                     <VisualState.Setters>
-                                        <Setter Target="PlayPauseSymbolLeft.Symbol"
-                                                Value="Pause" />
                                         <Setter Target="PlayPauseSymbol.Symbol"
                                                 Value="Pause" />
                                         <Setter Target="FileTypeIcon.Symbol"
@@ -744,8 +742,7 @@
                                 <CommandBar x:Name="MediaControlsCommandBar"
                                             Grid.Row="2"
                                             Margin="0,0" 
-                                            Style ="{StaticResource ControlBarSettingPanel}"
-                                            >
+                                            Style ="{StaticResource ControlBarSettingPanel}">
                                         <AppBarButton x:Name="OpenPlayList"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Visible">

@@ -41,7 +41,6 @@ namespace SimpleMediaplayer
             setMediaPlayer();
         }
 
-
         private void setMediaPlayer()
         {
             _PlayerCore = new MediaPlayer();

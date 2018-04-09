@@ -18,7 +18,7 @@ namespace SimpleMediaplayer
     public sealed class ControlBar : Control
     {
         private PlayList PlayListControl;
-        private CommandBar MediaControlsCommandBar;
+        private Slider ProgressSlider;
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -72,7 +72,8 @@ namespace SimpleMediaplayer
             var PlayPauseButton = GetTemplateChild("PlayPauseButton") as AppBarButton;
             PlayPauseButton.Click += PlayPauseButton_Click;
 
-            MediaControlsCommandBar = GetTemplateChild("MediaControlsCommandBar") as CommandBar;
+            ProgressSlider = GetTemplateChild("ProgressSlider") as Slider;
+            ProgressSlider.Loaded += ProgressSlider_Loaded;
 
             PlayListControl = GetTemplateChild("PlayList") as PlayList;
 
@@ -91,7 +92,13 @@ namespace SimpleMediaplayer
         {
             if(AttachedMediaPlayer.TimelineController.State.Equals(Windows.Media.MediaTimelineControllerState.Paused))
             {
-                
+                AttachedMediaPlayer.TimelineController.Resume();
+                VisualStateManager.GoToState(this, "PlayState", false);
+            }
+            else if (AttachedMediaPlayer.TimelineController.State.Equals(Windows.Media.MediaTimelineControllerState.Running))
+            {
+                AttachedMediaPlayer.TimelineController.Pause();
+                VisualStateManager.GoToState(this, "PauseState", false);
             }
             
         }
@@ -128,6 +135,14 @@ namespace SimpleMediaplayer
         }
         #endregion
 
+        #region ProgressSlider
+        private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region 播放事件处理
         private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
@@ -139,9 +154,21 @@ namespace SimpleMediaplayer
             {
                 NowPlay = file[0].Name;
                 var mediasource = MediaSource.CreateFromStorageFile(file[0]);
-               
+                mediasource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                AttachedMediaPlayer.Source = mediasource;
             }
         }
+
+        private async void mediasource_OpenOperationCompleted (MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
+        {
+            var _Span = sender.Duration.GetValueOrDefault();
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,() => {
+                ProgressSlider.Minimum = 0;
+                ProgressSlider.Maximum = _Span.TotalSeconds;
+                ProgressSlider.StepFrequency = 1;
+            });
+        }
+        #endregion
 
         public void SetMediaPlayer (MediaPlayer player)
         {
