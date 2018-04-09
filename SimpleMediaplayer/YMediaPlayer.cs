@@ -14,26 +14,6 @@ namespace SimpleMediaplayer
 {
     public sealed class YMediaPlayer : MediaPlayerElement
     {
-        protected override void OnTapped(TappedRoutedEventArgs e)
-        {
-            base.OnTapped(e);
-            
-        }
-
-        protected override void OnPointerMoved(PointerRoutedEventArgs e)
-        {
-            
-        }
-
-        protected override void OnPointerEntered(PointerRoutedEventArgs e)
-        {
-            base.OnPointerEntered(e);
-        }
-
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-        }
 
         public YMediaPlayer()
         {

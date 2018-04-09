@@ -28,7 +28,7 @@ namespace SimpleMediaplayer
         }
         private static void IsPlaylistVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Debug.WriteLine(e.NewValue);
+
         }
         #endregion
 

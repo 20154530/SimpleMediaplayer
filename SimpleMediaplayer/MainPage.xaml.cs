@@ -19,6 +19,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
+using Windows.Devices.Input;
+using Windows.Graphics.Display;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -32,22 +34,16 @@ namespace SimpleMediaplayer
         private StatusBar _Statusbar;
         private SimpleOrientationSensor _Simpleorientationsensor;
         private MediaPlayer _PlayerCore;
+        private Windows.Media.MediaTimelineController _PlayerCore_TimelineController;
+        public static Size DeviceResolution;
 
         public MainPage()
         {
             CheckStatusBar();
             SetOrientation();     
             this.InitializeComponent();
-            setMediaPlayer();
-        }
-
-        private void setMediaPlayer()
-        {
-            _PlayerCore = new MediaPlayer();
-            _PlayerCore.CommandManager.IsEnabled = false;
-            _PlayerCore.TimelineController = new Windows.Media.MediaTimelineController();
-            MediaPlayer.SetMediaPlayer(_PlayerCore);
-            MediaPlayer_ControlBar.SetMediaPlayer(_PlayerCore);
+            DeviceResolution = new Size(DisplayInformation.GetForCurrentView().ScreenWidthInRawPixels * DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel,
+                DisplayInformation.GetForCurrentView().ScreenHeightInRawPixels * DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel);
         }
 
         private async void CheckStatusBar()
@@ -98,6 +94,22 @@ namespace SimpleMediaplayer
                         break;
                 }
             });
+        }
+
+        private void RootPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            setMediaPlayer();
+            MediaPlayer_ControlBar.SetChildBindings();
+        }
+
+        private void setMediaPlayer()//Init MediaPlayer
+        {
+            _PlayerCore = new MediaPlayer();
+            _PlayerCore.CommandManager.IsEnabled = false;
+            _PlayerCore_TimelineController = new Windows.Media.MediaTimelineController();
+            _PlayerCore.TimelineController = _PlayerCore_TimelineController;
+            MediaPlayer.SetMediaPlayer(_PlayerCore);
+            MediaPlayer_ControlBar.SetMediaPlayer(_PlayerCore);
         }
 
     }

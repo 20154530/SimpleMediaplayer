@@ -14,24 +14,32 @@ namespace SimpleMediaplayer
         private Size SetSize;
         private int Sets;
         private int InnerElements;
+        private int RightSideElements;
 
         protected override Size MeasureOverride(Size availableSize)
         {
             Sets = 0;
             InnerElements = 0;
+            RightSideElements = 0;
             SetSize = new Size(0, 0);
             foreach (var child in Children)
             {
                 if (child is AppBarSeparator)
-                    Sets++;
-                else if (Sets == 1 && child.Visibility.Equals(Visibility))
-                    InnerElements++;
+                {
+                    Sets++; RightSideElements = 0;
+                }
+                else if (child.Visibility.Equals(Visibility))
+                    if (Sets == 1)
+                        InnerElements++;
+                    else
+                        RightSideElements++;
+
 
                 child.Measure(availableSize);
                 SetSize.Height = child.DesiredSize.Height > SetSize.Height ? child.DesiredSize.Height : SetSize.Height;
             }
 
-           
+
             if (availableSize.Width == Double.PositiveInfinity)
                 return SetSize;
             else
@@ -53,32 +61,14 @@ namespace SimpleMediaplayer
                     Sepx += Sepx;
                     Setn++;
                     if (Setn == Sets)
-                        x = finalSize.Width - SetSize.Height;
+                        x = finalSize.Width - RightSideElements * SetSize.Height;
                     else
-                    {
                         x = (finalSize.Width - InnerElements * SetSize.Height) / 2;
-                        Debug.WriteLine(finalSize);
-                        Debug.WriteLine(x);
-                    }
                 }
                 else
                 {
-                    if (Setn == 0)
-                    {
                         child.Arrange(new Rect(x, 0, child.DesiredSize.Width, child.DesiredSize.Height));
                         x += child.DesiredSize.Width;
-                    }
-                    else if (Setn == Sets)
-                    {
-                        child.Arrange(new Rect(x, 0, child.DesiredSize.Width, child.DesiredSize.Height));
-                        x -= child.DesiredSize.Width;
-                    }
-                    else
-                    {
-                        child.Arrange(new Rect(x, 0, child.DesiredSize.Width, child.DesiredSize.Height));
-                        x += child.DesiredSize.Width;
-                    }
-
                 }
             }
             return finalSize;

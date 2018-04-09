@@ -3,6 +3,8 @@
                     xmlns:local="using:SimpleMediaplayer">
     <!--Converter-->
     <local:WidthConverter x:Key="WidthConverter"/>
+    <local:StoHMSConverter x:Key="StoHMSConverter"/>
+    <local:TimeLineConverter x:Key="TimeLineConverter"/>
 
     <!--Data-->
     <local:SystemInfo x:Key="Info" />
@@ -620,7 +622,7 @@
                                            Grid.Column="1"
                                            Foreground="{StaticResource StatusBar_Text}"
                                            FontSize="{StaticResource StatusBar_Text_Size}"
-                                         
+                                           Text="{Binding NowPlay, RelativeSource={RelativeSource TemplatedParent},Mode=OneWay}"
                                            FontWeight="Light"
                                            Margin="10,0,10,0"
                                            VerticalAlignment="Top" />
@@ -708,6 +710,7 @@
                                         <Slider x:Name="ProgressSlider"
                                                 Height="8"
                                                 IsThumbToolTipEnabled="False"
+                                                Maximum="0"
                                                 MinWidth="80"
                                                 Margin="12,3"
                                                 Style="{StaticResource MediaSliderStyle}"
@@ -727,13 +730,13 @@
                                                        HorizontalAlignment="Left"
                                                        Margin="0"
                                                        Style="{StaticResource MediaTextBlockStyle}"
-                                                       Text="00:00"
+                                                       Text="{Binding ElementName=ProgressSlider,Path=Value,Mode=OneWay,Converter={StaticResource StoHMSConverter}}"
                                                        VerticalAlignment="Bottom"
                                                        FontSize="12" />
                                             <TextBlock x:Name="TimeRemainingElement"
                                                        HorizontalAlignment="Right"
                                                        Style="{StaticResource MediaTextBlockStyle}"
-                                                       Text="00:00"
+                                                       Text="{Binding ElementName=ProgressSlider,Path=Maximum,Mode=OneWay,Converter={StaticResource StoHMSConverter}}"
                                                        VerticalAlignment="Bottom"
                                                        FontSize="12" />
                                         </Grid>
@@ -759,7 +762,6 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="VolumeMuteButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="19"
                                                       Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Flyout>
                                                 <Flyout x:Name="VolumeFlyout" 
@@ -775,6 +777,7 @@
                                                                 IsThumbToolTipEnabled="False"
                                                                 Grid.Column="0"
                                                                 Margin="0"
+                                                                Maximum="100"
                                                                 VerticalAlignment="Center"
                                                                 Width="{ThemeResource MTCHorizontalVolumeSliderWidth}"
                                                                 Style="{StaticResource MediaSliderStyle}" />
@@ -796,8 +799,7 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="AudioTracksSelectionButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="13"
-                                                      Style="{StaticResource AppBarButtonStyle}"
+                                                      Style="{StaticResource AppBarButtonStyle }"
                                                       Visibility="Collapsed">
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="&#xED1F;" />
@@ -808,12 +810,10 @@
                                                          Margin="0,0"
                                                          Width="0" />
                                         <AppBarButton x:Name="PreviousTrackButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="3"
                                                       Icon="Previous"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed" />
                                         <AppBarButton x:Name="PlayPauseButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="23"
                                                       Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <SymbolIcon x:Name="PlayPauseSymbol"
@@ -822,7 +822,6 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="NextTrackButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="3"
                                                       Icon="Next"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed" />
@@ -831,7 +830,6 @@
                                                          Margin="0,0"
                                                          Width="0" />
                                         <AppBarButton x:Name="ZoomButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="9"
                                                       Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="&#xE799;"
@@ -839,7 +837,6 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="CastButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="11"
                                                       Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <FontIcon Glyph="&#xEC15;"
@@ -847,7 +844,6 @@
                                             </AppBarButton.Icon>
                                         </AppBarButton>
                                         <AppBarButton x:Name="FullWindowButton"
-                                                      MediaTransportControlsHelper.DropoutOrder="17"
                                                       Style="{StaticResource AppBarButtonStyle}">
                                             <AppBarButton.Icon>
                                                 <SymbolIcon x:Name="FullWindowSymbol"
