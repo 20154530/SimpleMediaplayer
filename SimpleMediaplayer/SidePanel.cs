@@ -20,7 +20,6 @@ namespace SimpleMediaplayer
             Sets = 0;
             InnerElements = 0;
             SetSize = new Size(0, 0);
-           // Debug.WriteLine(availableSize);
             foreach (var child in Children)
             {
                 if (child is AppBarSeparator)
@@ -38,8 +37,6 @@ namespace SimpleMediaplayer
             else
                 SetSize.Width = availableSize.Width / (Sets + 1);
 
-           // Debug.WriteLine(availableSize);
-           // Debug.WriteLine(SetSize);
             return new Size(availableSize.Width, SetSize.Height);
         }
 
@@ -83,7 +80,6 @@ namespace SimpleMediaplayer
                     }
 
                 }
-                // Debug.WriteLine(x);
             }
             return finalSize;
         }

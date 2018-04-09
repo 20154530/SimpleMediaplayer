@@ -55,7 +55,6 @@ namespace SimpleMediaplayer
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
-           
         }
 
         protected override void OnApplyTemplate()
