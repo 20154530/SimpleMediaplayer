@@ -34,16 +34,13 @@ namespace SimpleMediaplayer
         private StatusBar _Statusbar;
         private SimpleOrientationSensor _Simpleorientationsensor;
         private MediaPlayer _PlayerCore;
-        private Windows.Media.MediaTimelineController _PlayerCore_TimelineController;
-        public static Size DeviceResolution;
 
         public MainPage()
         {
             CheckStatusBar();
             SetOrientation();     
             this.InitializeComponent();
-            DeviceResolution = new Size(DisplayInformation.GetForCurrentView().ScreenWidthInRawPixels * DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel,
-                DisplayInformation.GetForCurrentView().ScreenHeightInRawPixels * DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel);
+        
         }
 
         private async void CheckStatusBar()
@@ -99,17 +96,16 @@ namespace SimpleMediaplayer
         private void RootPage_Loaded(object sender, RoutedEventArgs e)
         {
             setMediaPlayer();
-            MediaPlayer_ControlBar.SetChildBindings();
+            _MediaPlayer_ControlBar.SetChildBindings();
         }
 
         private void setMediaPlayer()//Init MediaPlayer
         {
             _PlayerCore = new MediaPlayer();
             _PlayerCore.CommandManager.IsEnabled = false;
-            _PlayerCore_TimelineController = new Windows.Media.MediaTimelineController();
-            _PlayerCore.TimelineController = _PlayerCore_TimelineController;
-            MediaPlayer.SetMediaPlayer(_PlayerCore);
-            MediaPlayer_ControlBar.SetMediaPlayer(_PlayerCore);
+            _MediaPlayer.SetMediaPlayer(_PlayerCore);
+            _MediaPlayer.AttachedControlbar = _MediaPlayer_ControlBar;
+            _MediaPlayer_ControlBar.AttachedMediaPlayer = _PlayerCore;
         }
 
     }

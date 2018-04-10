@@ -10,7 +10,7 @@
 
     <Grid x:Name="RootPanel" Background="Black">
         <Image Source="/Assets/Mou1.jpg" />
-        <local:YMediaPlayer x:Name="MediaPlayer" AreTransportControlsEnabled="False" Stretch="Uniform"/>
-        <local:ControlBar x:Name="MediaPlayer_ControlBar" AttachedMediaPlayerElement="{x:Bind MediaPlayer}"/>
+        <local:YMediaPlayer x:Name="_MediaPlayer" AreTransportControlsEnabled="False" Stretch="Uniform"/>
+        <local:ControlBar x:Name="_MediaPlayer_ControlBar" />
     </Grid>
 </Page>

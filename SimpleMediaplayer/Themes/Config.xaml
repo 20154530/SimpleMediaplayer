@@ -5,7 +5,7 @@
     <SolidColorBrush x:Key="DefaultMainPage_Bg" Color="#000000" />
 
     <SolidColorBrush x:Key="StatusBar_Bg" Color="#a0000000" />
-    <SolidColorBrush x:Key="StatusBar_Text" Color="#80ffffff" />
+    <SolidColorBrush x:Key="StatusBar_Text" Color="#c0ffffff" />
     <SolidColorBrush x:Key="StatusBar_Seperator_bg" Color="#60ffffff"/>
 
     <SolidColorBrush x:Key="ControlBar_Thumb_N" Color="#60ffffff"/>

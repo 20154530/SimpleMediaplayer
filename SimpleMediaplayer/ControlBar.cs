@@ -13,6 +13,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Media.Core;
 using System.Diagnostics;
 using Windows.UI.ViewManagement;
+using Windows.Graphics.Display;
 
 namespace SimpleMediaplayer
 {
@@ -23,6 +24,7 @@ namespace SimpleMediaplayer
         private DispatcherTimer ProgressTimer;
         private Slider VolumeSlider;
         private bool IsFullWindow = false;
+        public bool IsVisible { get; set; }
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -45,13 +47,8 @@ namespace SimpleMediaplayer
         #endregion
 
         #region 关联播放控件
-        private static readonly DependencyProperty AttachedMediaPlayerElementProperty = DependencyProperty.RegisterAttached("AttachedMediaPlayer", typeof(MediaPlayerElement), typeof(ControlBar),
-            new PropertyMetadata(null));
-        public MediaPlayerElement AttachedMediaPlayerElement
-        {
-            get { return (MediaPlayerElement)GetValue(AttachedMediaPlayerElementProperty); }
-            set { SetValue(AttachedMediaPlayerElementProperty, value); }
-        }
+
+        
         #endregion
 
         #region 文件播放列表
@@ -69,22 +66,26 @@ namespace SimpleMediaplayer
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
+            IsVisible = true;
         }
 
         protected override void OnApplyTemplate()
         {
 
-            var OpenFileButton = GetTemplateChild("OpenFile") as Button;
+            var OpenFileButton = GetTemplateChild("OpenFile") as AppBarButton;
             OpenFileButton.Click += OpenFileButton_Click;
 
-            var OpenPlayList = GetTemplateChild("OpenPlayList") as Button;
+            var OpenPlayList = GetTemplateChild("OpenPlayList") as AppBarButton;
             OpenPlayList.Click += OpenPlayList_Click;
 
             var PlayPauseButton = GetTemplateChild("PlayPauseButton") as AppBarButton;
             PlayPauseButton.Click += PlayPauseButton_Click;
 
-            var FullWindowButton = GetTemplateChild("FullWindowButton") as Button;
+            var FullWindowButton = GetTemplateChild("FullWindowButton") as AppBarButton;
             FullWindowButton.Click += FullWindowButton_Click;
+
+            var SettingButton = GetTemplateChild("SettingButton") as AppBarToggleButton;
+            SettingButton.Click += SettingButton_Click;
 
             VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
             VolumeSlider.ValueChanged += VolumeSlider_OnValueChange;
@@ -106,78 +107,69 @@ namespace SimpleMediaplayer
 
         #region 内部控件事件
 
-        #region PlayPause
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)//PlayPause
         {
-            if (AttachedMediaPlayer.TimelineController.State.Equals(Windows.Media.MediaTimelineControllerState.Paused))
+            if (AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Paused))
             {
-                AttachedMediaPlayer.TimelineController.Resume();
+                AttachedMediaPlayer.Play();
+                
                 VisualStateManager.GoToState(this, "PauseState", false);
                 ProgressTimer.Start();
             }
-            else if (AttachedMediaPlayer.TimelineController.State.Equals(Windows.Media.MediaTimelineControllerState.Running))
+            else if (AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Playing))
             {
-                AttachedMediaPlayer.TimelineController.Pause();
+                AttachedMediaPlayer.Pause();
+
                 VisualStateManager.GoToState(this, "PlayState", false);
                 ProgressTimer.Stop();
             }
 
         }
-        #endregion
 
-        #region ControlBlank
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(!(sender as AppBarToggleButton).IsPressed)
+                VisualStateManager.GoToState(this, "SettingButton_Active", false);
+            else
+                VisualStateManager.GoToState(this, "SettingButton_Normal", false);
+        }
 
-        #endregion
-
-        #region FullWindow
-
-
-        private void FullWindowButton_Click(object sender, RoutedEventArgs e)
+        private void FullWindowButton_Click(object sender, RoutedEventArgs e)//FullWindow
         {
             if (IsFullWindow)
             {
-                AttachedMediaPlayerElement.Width = MainPage.DeviceResolution.Width;
-                AttachedMediaPlayerElement.Height = MainPage.DeviceResolution.Height;
-
+                ApplicationView.GetForCurrentView().ExitFullScreenMode();
                 VisualStateManager.GoToState(this, "NonFullWindowState", false);
             }
             else
             {
+                ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
                 VisualStateManager.GoToState(this, "FullWindowState", false);
             }
 
             IsFullWindow = !IsFullWindow;
         }
-        #endregion
 
-        #region PlayList
-        private void OpenPlayList_Click(object sender, RoutedEventArgs e)
+        private void OpenPlayList_Click(object sender, RoutedEventArgs e)//OpenPlayList
         {
             if (PlayListControl.IsPlaylistVisible)
                 VisualStateManager.GoToState(this, "PlayListHide", false);
             else
                 VisualStateManager.GoToState(this, "PlayListShow", false);
-
-            PlayListControl.IsPlaylistVisible = !PlayListControl.IsPlaylistVisible;
         }
-        #endregion
 
-        #region VolumeSlider
-        private void VolumeSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)
+        private void VolumeSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)//VolumeSlider
         {
             if (e.NewValue == 0)
                 VisualStateManager.GoToState(this, "MuteState", false);
             else
                 VisualStateManager.GoToState(this, "VolumeState", false);
         }
-        #endregion
 
-        #region ProgressSlider
-        private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)
+        private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)//ProgressSlider
         {
 
         }
-        #endregion
 
         #region 播放事件处理
         private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
@@ -198,6 +190,7 @@ namespace SimpleMediaplayer
 
         private async void mediasource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
+
             var _Span = sender.Duration.GetValueOrDefault();
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
@@ -206,6 +199,7 @@ namespace SimpleMediaplayer
                 ProgressSlider.Maximum = _Span.TotalSeconds;
                 ProgressSlider.StepFrequency = 1;
             });
+            
         }
         #endregion
 
@@ -218,7 +212,7 @@ namespace SimpleMediaplayer
             ProgressSlider.SetBinding(Slider.ValueProperty, new Binding()
             {
                 Path = new PropertyPath("Position"),
-                Source = AttachedMediaPlayer.TimelineController,
+                Source = AttachedMediaPlayer.PlaybackSession,
                 Mode = BindingMode.TwoWay,
                 Converter = new TimeLineConverter()
             });
@@ -231,12 +225,36 @@ namespace SimpleMediaplayer
                 Converter = new VolumeConverter()
             });
         }
+
+        public void Show()
+        {
+            IsVisible = true;
+            VisualStateManager.GoToState(this, "ControlPanelFadeIn", false);
+        }
+
+        public void Hide()
+        {
+            IsVisible = false;
+            VisualStateManager.GoToState(this, "ControlPanelFadeOut", false);
+            if (PlayListControl.IsPlaylistVisible)
+                VisualStateManager.GoToState(this, "PlayListHide", false);
+        }
         #endregion
 
-        public void SetMediaPlayer(MediaPlayer player)
+        #region 异步事件
+        private void ProgressTimer_Tick(object sender, object e)
         {
-            AttachedMediaPlayer = player;
+            //Debug.WriteLine((double)AttachedMediaPlayer.Volume);
+            ProgressSlider.Value = ((TimeSpan)AttachedMediaPlayer.PlaybackSession.Position).TotalSeconds;
+            if (ProgressSlider.Value == ProgressSlider.Maximum)
+            {
+                ProgressSlider.Value = 0;
+                AttachedMediaPlayer.Pause();
+                VisualStateManager.GoToState(this, "PlayState", false);
+                ProgressTimer.Stop();
+            }
         }
+        #endregion
 
         public ControlBar()
         {
@@ -247,20 +265,8 @@ namespace SimpleMediaplayer
             ProgressTimer = new DispatcherTimer();
             ProgressTimer.Interval = TimeSpan.FromSeconds(1);
             ProgressTimer.Tick += ProgressTimer_Tick;
-        }
 
-        #region 异步事件
-        private void ProgressTimer_Tick(object sender, object e)
-        {
-            //Debug.WriteLine((double)AttachedMediaPlayer.Volume);
-            ProgressSlider.Value = ((TimeSpan)AttachedMediaPlayer.TimelineController.Position).TotalSeconds;
-            if (ProgressSlider.Value == ProgressSlider.Maximum)
-            {
-                AttachedMediaPlayer.TimelineController.Position = TimeSpan.FromSeconds(0);
-                AttachedMediaPlayer.TimelineController.Pause();
-            }
         }
-        #endregion
     }
 
     public class MediaInfo

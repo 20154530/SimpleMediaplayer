@@ -118,7 +118,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ControlBar">
-                    <Grid x:Name="RootGrid" Background="Transparent">
+                    <Grid x:Name="RootGrid" >
                         <Grid.Resources>
                             <Style x:Key="AppBarButtonStyle"
                                    TargetType="AppBarButton">
@@ -449,21 +449,18 @@
                             <VisualStateGroup x:Name="ControlPanelVisibilityStates">
                                 <VisualState x:Name="ControlPanelFadeIn">
                                     <Storyboard >
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border"
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Grid"
                                                                        Storyboard.TargetProperty="Opacity">
                                             <EasingDoubleKeyFrame KeyTime="0" Value="0" />
                                             <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimation Duration="0:0:0.3" From="50" Storyboard.TargetName="TranslateVertical"
                                                          Storyboard.TargetProperty="Y" To="0" />
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayList" Storyboard.TargetProperty="IsPlaylistVisible">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="false"/>
-                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ControlPanelFadeOut">
                                     <Storyboard >
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Border"
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlPanel_ControlPanelVisibilityStates_Grid"
                                                                        Storyboard.TargetProperty="Opacity">
                                             <EasingDoubleKeyFrame KeyTime="0" Value="1" />
                                             <EasingDoubleKeyFrame KeyTime="0:0:0.7" Value="0" />
@@ -472,7 +469,9 @@
                                                          Storyboard.TargetProperty="Y"
                                                          To="50" />
                                         <DoubleAnimation Storyboard.TargetName="PlayList" Storyboard.TargetProperty="Opacity" Duration="0:0:0.5" To="0"/>
-
+                                        <DoubleAnimation Storyboard.TargetName="PlayList_TranslateTransform" Storyboard.TargetProperty="X" 
+                                                         Duration="0:0:0.5" 
+                                                         To="{Binding ActualWidth, ElementName=PlayList,Converter={StaticResource WidthConverter}}"/>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -575,6 +574,9 @@
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="PlayListState">
                                 <VisualState x:Name="PlayListShow">
+                                    <VisualState.Setters>
+                                        <Setter Target="PlayList.IsPlaylistVisible" Value="true"/>
+                                    </VisualState.Setters>
                                     <Storyboard x:Name="PlayListShowAni">
                                         <DoubleAnimation Storyboard.TargetName="PlayList" Storyboard.TargetProperty="Opacity" Duration="0:0:0.5" To="1"/>
                                         <DoubleAnimation Storyboard.TargetName="PlayList_TranslateTransform" Storyboard.TargetProperty="X" 
@@ -582,6 +584,9 @@
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PlayListHide" >
+                                    <VisualState.Setters>
+                                        <Setter Target="PlayList.IsPlaylistVisible" Value="false"/>
+                                    </VisualState.Setters>
                                     <Storyboard x:Name="PlayListHideAni">
                                         <DoubleAnimation Storyboard.TargetName="PlayList" Storyboard.TargetProperty="Opacity" Duration="0:0:0.5" To="0"/>
                                         <DoubleAnimation Storyboard.TargetName="PlayList_TranslateTransform" Storyboard.TargetProperty="X" 
@@ -590,10 +595,46 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="MediaControlsCommandBarState">
+                                <VisualState x:Name="SettingButton_Normal">
+                                    <Storyboard >
+                                        <DoubleAnimation Storyboard.TargetName="SettingButton_RotateTransform" Storyboard.TargetProperty="Angle"
+                                                         Duration="0:0:0.5" To="0"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SettingButton_Active">
+                                    <Storyboard >
+                                        <DoubleAnimation Storyboard.TargetName="SettingButton_RotateTransform" Storyboard.TargetProperty="Angle"
+                                                         Duration="0:0:0.5" To="120"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="OpenUriResState">
+                                <VisualState x:Name="OpenUriResState_Show">
+                                    <VisualState.Setters>
+                                        <Setter Target="OpenUriRes.Visibility" Value="Visible"/>
+                                    </VisualState.Setters>
+                                    <Storyboard >
+                                        <DoubleAnimation Storyboard.TargetName="OpenUriRes" Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.5" To="1"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="OpenUriResState_Hide">
+                                    <VisualState.Setters>
+                                        <Setter Target="OpenUriRes.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                    <Storyboard >
+                                        <DoubleAnimation Storyboard.TargetName="OpenUriRes" Storyboard.TargetProperty="Opacity"
+                                                         Duration="0:0:0.5" To="0"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="ControlPanel_ControlPanelVisibilityStates_Grid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20" />
+                                <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
@@ -658,7 +699,10 @@
                                            FontWeight="Light"
                                            VerticalAlignment="Top" />
                             </Grid>
-                            <Grid x:Name="FlyoutLayer" Grid.Row="1" HorizontalAlignment="Left" >
+                            <Grid x:Name="OpenUriRes" Grid.Column="1" Background="{StaticResource StatusBar_Bg}" Visibility="Collapsed" Height="40" Opacity="0">
+                                
+                            </Grid>
+                            <Grid x:Name="FlyoutLayer" Grid.Row="2" HorizontalAlignment="Left" >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
@@ -676,9 +720,7 @@
                                 </local:PlayList>
 
                             </Grid>
-                            <Grid x:Name="ControlPanelGrid"
-                                  Background="{StaticResource StatusBar_Bg}"
-                                  Grid.Row="2"
+                            <Grid x:Name="ControlPanelGrid" Grid.Row="3" Background="{StaticResource StatusBar_Bg}"
                                   RenderTransformOrigin="0.5,0.5"
                                   VerticalAlignment="Bottom">
                                 <Grid.RowDefinitions>
@@ -746,32 +788,34 @@
                                             Grid.Row="2"
                                             Margin="0,0" 
                                             Style ="{StaticResource ControlBarSettingPanel}">
-                                        <AppBarButton x:Name="OpenPlayList"
+                                    <AppBarButton x:Name="OpenPlayList"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Visible">
-                                            <AppBarButton.Icon>
-                                                <FontIcon Glyph="&#xE71D;" Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="OpenFile"
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xE71D;" Foreground="{StaticResource ControlBar_Text}" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarButton x:Name="OpenFile"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Visible">
-                                            <AppBarButton.Icon>
-                                                <SymbolIcon Symbol="OpenFile"
+                                        
+                                        <AppBarButton.Icon>
+                                            <SymbolIcon Symbol="OpenFile"
                                                             Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="VolumeMuteButton"
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    
+                                    <AppBarButton x:Name="VolumeMuteButton"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <AppBarButton.Flyout>
-                                                <Flyout x:Name="VolumeFlyout" 
+                                        <AppBarButton.Flyout>
+                                            <Flyout x:Name="VolumeFlyout" 
                                                         FlyoutPresenterStyle="{StaticResource FlyoutStyle}" Placement="Right">
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="auto" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <Slider x:Name="VolumeSlider"
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Slider x:Name="VolumeSlider"
                                                                 Height="8"
                                                                 HorizontalAlignment="Center"
                                                                 IsThumbToolTipEnabled="False"
@@ -781,7 +825,7 @@
                                                                 VerticalAlignment="Center"
                                                                 Width="{ThemeResource MTCHorizontalVolumeSliderWidth}"
                                                                 Style="{StaticResource MediaSliderStyle}" />
-                                                        <TextBlock x:Name="VolumeValue"
+                                                    <TextBlock x:Name="VolumeValue"
                                                                    Grid.Column="1"
                                                                    HorizontalAlignment="Center"
                                                                    Margin="12"
@@ -789,69 +833,67 @@
                                                                    Text="{Binding Value, ElementName=VolumeSlider}"
                                                                    VerticalAlignment="Center"
                                                                    Width="24" />
-                                                    </Grid>
-                                                </Flyout>
-                                            </AppBarButton.Flyout>
-                                            <AppBarButton.Icon>
-                                                <SymbolIcon x:Name="VolumeMuteSymbol"
+                                                </Grid>
+                                            </Flyout>
+                                        </AppBarButton.Flyout>
+                                        <AppBarButton.Icon>
+                                            <SymbolIcon x:Name="VolumeMuteSymbol"
                                                             Symbol="Volume"
                                                             Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="AudioTracksSelectionButton"
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarButton x:Name="AudioTracksSelectionButton"
                                                       Style="{StaticResource AppBarButtonStyle }"
                                                       Visibility="Collapsed">
-                                            <AppBarButton.Icon>
-                                                <FontIcon Glyph="&#xED1F;" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarSeparator x:Name="LeftSeparator"
+                                        <AppBarButton.Icon>
+                                            <FontIcon Glyph="&#xED1F;" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarSeparator x:Name="LeftSeparator"
                                                          Height="0"
                                                          Margin="0,0"
                                                          Width="0" />
-                                        <AppBarButton x:Name="PreviousTrackButton"
+                                    <AppBarButton x:Name="PreviousTrackButton"
                                                       Icon="Previous"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed" />
-                                        <AppBarButton x:Name="PlayPauseButton"
+                                    <AppBarButton x:Name="PlayPauseButton"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <AppBarButton.Icon>
-                                                <SymbolIcon x:Name="PlayPauseSymbol"
+                                        <AppBarButton.Icon>
+                                            <SymbolIcon x:Name="PlayPauseSymbol"
                                                             Symbol="Play"
                                                             Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="NextTrackButton"
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarButton x:Name="NextTrackButton"
                                                       Icon="Next"
                                                       Style="{StaticResource AppBarButtonStyle}"
                                                       Visibility="Collapsed" />
-                                        <AppBarSeparator x:Name="RightSeparator"
+                                    <AppBarSeparator x:Name="RightSeparator"
                                                          Height="0"
                                                          Margin="0,0"
                                                          Width="0" />
-                                        <AppBarButton x:Name="ZoomButton"
+                                    <AppBarToggleButton x:Name="SettingButton" RenderTransformOrigin=".5 .5"
+                                                      Style="{StaticResource AppBarToggleButtonStyle}">
+                                        <AppBarToggleButton.Icon>
+                                            <SymbolIcon Symbol="Setting" RenderTransformOrigin=".5 .5"
+                                                          Foreground="{StaticResource ControlBar_Text}" >
+                                                <SymbolIcon.RenderTransform>
+                                                    <RotateTransform x:Name="SettingButton_RotateTransform" Angle="0"/>
+                                                </SymbolIcon.RenderTransform>
+                                            </SymbolIcon>
+                                        </AppBarToggleButton.Icon>
+                                        
+                                    </AppBarToggleButton>
+                                    <AppBarButton x:Name="FullWindowButton"
                                                       Style="{StaticResource AppBarButtonStyle}">
-                                            <AppBarButton.Icon>
-                                                <FontIcon Glyph="&#xE799;"
-                                                          Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="CastButton"
-                                                      Style="{StaticResource AppBarButtonStyle}">
-                                            <AppBarButton.Icon>
-                                                <FontIcon Glyph="&#xEC15;"
-                                                          Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                        <AppBarButton x:Name="FullWindowButton"
-                                                      Style="{StaticResource AppBarButtonStyle}">
-                                            <AppBarButton.Icon>
-                                                <SymbolIcon x:Name="FullWindowSymbol"
+                                        <AppBarButton.Icon>
+                                            <SymbolIcon x:Name="FullWindowSymbol"
                                                             Symbol="FullScreen"
                                                             Foreground="{StaticResource ControlBar_Text}" />
-                                            </AppBarButton.Icon>
-                                        </AppBarButton>
-                                    </CommandBar>
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                </CommandBar>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -990,5 +1032,5 @@
     </Style>
 
     <!--CommandBar-->
-  
+
 </ResourceDictionary>
