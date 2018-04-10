@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.Devices.Input;
 
 namespace SimpleMediaplayer
 {
@@ -30,6 +31,13 @@ namespace SimpleMediaplayer
             else
                 attachedControlbar.Show();
             base.OnTapped(e);
+        }
+
+        protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
+        {
+            attachedControlbar.ShowVolumeBar();
+            attachedControlbar.SetVolumeIncrement(e.GetCurrentPoint(null).Properties.MouseWheelDelta / 120 );
+            base.OnPointerWheelChanged(e);
         }
 
         public YMediaPlayer()

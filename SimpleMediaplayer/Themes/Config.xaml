@@ -23,15 +23,23 @@
     <SolidColorBrush x:Key="ControlBar_Decrease_P" Color="#40ffffff"/>
     <SolidColorBrush x:Key="ControlBar_Decrease_D" Color="#00000000"/>
 
-    <SolidColorBrush x:Key="ControlBar_Flyout_Bg" Color="#00000000" />
+    <SolidColorBrush x:Key="ControlBar_Flyout_Bg" Color="Transparent" />
     <SolidColorBrush x:Key="ControlBar_Text" Color="#b0ffffff" />
+
+    <SolidColorBrush x:Key="PlayList_Bg" Color="#a0000000"/>
+
 
     <!--大小配置-->
     <x:Double x:Key="StatusBar_Text_Size">14</x:Double>
+    
     <x:Double x:Key="ControlBar_Progress_Height">10</x:Double>
+    
     <x:Double x:Key="PlayList_IconSize">22</x:Double>
-    <x:String x:Key="PlayList_IconPadding">4</x:String>
+    <Thickness x:Key="PlayList_IconPadding">4</Thickness>
 
+    <x:Double x:Key="URLResourcesSearch_Icon_Size">20</x:Double>
+    <Thickness x:Key="URLResourcesSearch_Icon_Margin">20,0,10,0</Thickness>
+    <x:Double x:Key="URLResourcesSearch_TextBox_Height">15</x:Double>
 
     <!--样式配置-->
     

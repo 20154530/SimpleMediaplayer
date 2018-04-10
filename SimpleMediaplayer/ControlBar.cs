@@ -11,20 +11,27 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using Windows.Media.Core;
-using System.Diagnostics;
 using Windows.UI.ViewManagement;
 using Windows.Graphics.Display;
+using Windows.Devices.Input;
+using System.Diagnostics;
 
 namespace SimpleMediaplayer
 {
     public sealed class ControlBar : Control
     {
+        private DispatcherTimer ProgressTimer;
+        private DispatcherTimer VolumeSliderVisiblityTimer;
+
         private PlayList PlayListControl;
         private Slider ProgressSlider;
-        private DispatcherTimer ProgressTimer;
         private Slider VolumeSlider;
+
+        private bool IsURLResourcesSearchVisible = false;
+        private bool IsAdditionSettingVisible = false;
         private bool IsFullWindow = false;
         public bool IsVisible { get; set; }
+
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -46,11 +53,6 @@ namespace SimpleMediaplayer
         }
         #endregion
 
-        #region 关联播放控件
-
-        
-        #endregion
-
         #region 文件播放列表
         private static readonly DependencyProperty PalyListProperty = DependencyProperty.RegisterAttached("PlayList", typeof(List<String>), typeof(ControlBar),
             new PropertyMetadata(null));
@@ -66,13 +68,16 @@ namespace SimpleMediaplayer
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
+            VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
             IsVisible = true;
         }
 
         protected override void OnApplyTemplate()
         {
+            var OpenUrlRescourse = GetTemplateChild("OpenUrlRescourse") as Button;
+            OpenUrlRescourse.Click += OpenUrlRescourse_Click;
 
-            var OpenFileButton = GetTemplateChild("OpenFile") as AppBarButton;
+            var OpenFileButton = GetTemplateChild("OpenFile") as Button;
             OpenFileButton.Click += OpenFileButton_Click;
 
             var OpenPlayList = GetTemplateChild("OpenPlayList") as AppBarButton;
@@ -84,11 +89,14 @@ namespace SimpleMediaplayer
             var FullWindowButton = GetTemplateChild("FullWindowButton") as AppBarButton;
             FullWindowButton.Click += FullWindowButton_Click;
 
-            var SettingButton = GetTemplateChild("SettingButton") as AppBarToggleButton;
+            var SettingButton = GetTemplateChild("SettingButton") as AppBarButton;
             SettingButton.Click += SettingButton_Click;
+
+            var VolumeMuteButton = GetTemplateChild("VolumeMuteButton") as AppBarButton;
 
             VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
             VolumeSlider.ValueChanged += VolumeSlider_OnValueChange;
+            VolumeSlider.PointerWheelChanged += VolumeSlider_PointerWheelChanged;
 
             ProgressSlider = GetTemplateChild("ProgressSlider") as Slider;
             ProgressSlider.Loaded += ProgressSlider_Loaded;
@@ -112,7 +120,7 @@ namespace SimpleMediaplayer
             if (AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Paused))
             {
                 AttachedMediaPlayer.Play();
-                
+
                 VisualStateManager.GoToState(this, "PauseState", false);
                 ProgressTimer.Start();
             }
@@ -126,12 +134,26 @@ namespace SimpleMediaplayer
 
         }
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        private void SettingButton_Click(object sender, RoutedEventArgs e)//Setting
         {
-            if(!(sender as AppBarToggleButton).IsPressed)
-                VisualStateManager.GoToState(this, "SettingButton_Active", false);
-            else
+            if (IsAdditionSettingVisible)
                 VisualStateManager.GoToState(this, "SettingButton_Normal", false);
+
+            else
+                VisualStateManager.GoToState(this, "SettingButton_Active", false);
+
+            IsAdditionSettingVisible = !IsAdditionSettingVisible;
+        }
+
+        private void OpenUrlRescourse_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsURLResourcesSearchVisible)
+                VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
+            else
+                VisualStateManager.GoToState(this, "URLResources_Search_Show", false);
+
+            IsURLResourcesSearchVisible = !IsURLResourcesSearchVisible;
+
         }
 
         private void FullWindowButton_Click(object sender, RoutedEventArgs e)//FullWindow
@@ -166,6 +188,13 @@ namespace SimpleMediaplayer
                 VisualStateManager.GoToState(this, "VolumeState", false);
         }
 
+
+        private void VolumeSlider_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
+                ((Slider)sender).Value += e.GetCurrentPoint(null).Properties.MouseWheelDelta / 120;
+        }
+
         private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)//ProgressSlider
         {
 
@@ -190,7 +219,6 @@ namespace SimpleMediaplayer
 
         private async void mediasource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
-
             var _Span = sender.Duration.GetValueOrDefault();
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
@@ -199,7 +227,7 @@ namespace SimpleMediaplayer
                 ProgressSlider.Maximum = _Span.TotalSeconds;
                 ProgressSlider.StepFrequency = 1;
             });
-            
+
         }
         #endregion
 
@@ -239,9 +267,26 @@ namespace SimpleMediaplayer
             if (PlayListControl.IsPlaylistVisible)
                 VisualStateManager.GoToState(this, "PlayListHide", false);
         }
+
+        public void ShowVolumeBar()
+        {
+            VisualStateManager.GoToState(this, "VolumeSliderGridShow", false);
+            VolumeSliderVisiblityTimer.Start();
+        }
+
+        public void HideVolumeBar()
+        {
+            VisualStateManager.GoToState(this, "VolumeSliderGridHide", false);
+            VolumeSliderVisiblityTimer.Stop();
+        }
+
+        public void SetVolumeIncrement(double v)
+        {
+            VolumeSlider.Value += v;
+        }
         #endregion
 
-        #region 异步事件
+        #region 定时器异步事件
         private void ProgressTimer_Tick(object sender, object e)
         {
             //Debug.WriteLine((double)AttachedMediaPlayer.Volume);
@@ -254,6 +299,11 @@ namespace SimpleMediaplayer
                 ProgressTimer.Stop();
             }
         }
+
+        private void VolumeSliderVisiblityTimer_Tick(object sender, object e)
+        {
+            HideVolumeBar();
+        }
         #endregion
 
         public ControlBar()
@@ -263,9 +313,12 @@ namespace SimpleMediaplayer
 
             //进度条更新
             ProgressTimer = new DispatcherTimer();
-            ProgressTimer.Interval = TimeSpan.FromSeconds(1);
+            ProgressTimer.Interval = TimeSpan.FromMilliseconds(500);
             ProgressTimer.Tick += ProgressTimer_Tick;
 
+            VolumeSliderVisiblityTimer = new DispatcherTimer();
+            VolumeSliderVisiblityTimer.Interval = TimeSpan.FromSeconds(3);
+            VolumeSliderVisiblityTimer.Tick += VolumeSliderVisiblityTimer_Tick;
         }
     }
 
@@ -276,7 +329,7 @@ namespace SimpleMediaplayer
         public Image FileScaledImage { get; set; }
     }
 
-    #region Converter
+    #region Converters
     public class VolumeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

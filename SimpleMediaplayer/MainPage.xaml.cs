@@ -40,7 +40,6 @@ namespace SimpleMediaplayer
             CheckStatusBar();
             SetOrientation();     
             this.InitializeComponent();
-        
         }
 
         private async void CheckStatusBar()
