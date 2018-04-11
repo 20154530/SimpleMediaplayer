@@ -38,7 +38,7 @@ namespace SimpleMediaplayer
         public MainPage()
         {
             CheckStatusBar();
-            SetOrientation();     
+            SetOrientation();
             this.InitializeComponent();
         }
 

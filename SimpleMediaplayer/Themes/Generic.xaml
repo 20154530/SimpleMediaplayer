@@ -259,8 +259,8 @@
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0.2" To="1"/>
-                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:1" To="0"/>
+                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search_ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.5" To="1"/>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"/>
                                         </ObjectAnimationUsingKeyFrames>
@@ -269,11 +269,11 @@
                                 <VisualState x:Name="URLResources_Search_Hide" >
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0.2" To="0"/>
-                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:1" To="{Binding Height, RelativeSource={RelativeSource Mode=TemplatedParent},Mode=OneWay,Converter={StaticResource WidthConverter}}"/>
+                                                         Duration="0:0:0.5" To="0"/>
+                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search_ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.5" To="0"/>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Collapsed"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -458,15 +458,16 @@
                             </Grid>
                             <Grid x:Name="FlyoutLayer" Grid.Row="1" >
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition x:Name="URLResources_Search_Row" Height="auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <local:PlayList x:Name="PlayList" Background="{StaticResource PlayList_Bg}" Grid.RowSpan="2"
-                                                Opacity="0" IsPlaylistVisible="False">
+                                <!--PlayerList-->
+                                <local:PlayList x:Name="PlayList" Background="{StaticResource PlayList_Bg}" Grid.Row="1"
+                                                Opacity="0" IsPlaylistVisible="False" RenderTransformOrigin=".5 0"> 
                                     <local:PlayList.RenderTransform>
                                         <TranslateTransform x:Name="PlayList_TranslateTransform" />
                                     </local:PlayList.RenderTransform>
@@ -479,10 +480,11 @@
                                         </ListViewItem>
                                     </local:PlayList.Items>
                                 </local:PlayList>
+                                <!--SearchBox-->
                                 <Grid x:Name="URLResources_Search" Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource StatusBar_Bg}" 
                                       Opacity="0" Visibility="Collapsed">
                                     <Grid.RenderTransform>
-                                        <TranslateTransform x:Name="URLResources_Search_TranslateTransform" />
+                                        <ScaleTransform x:Name="URLResources_Search_ScaleTransform" />
                                     </Grid.RenderTransform>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
@@ -490,16 +492,20 @@
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <FontIcon x:Name="URLResources_Search_Icon" Glyph="&#xE1A3;" Foreground="{StaticResource ControlBar_Text}" 
+                                    <Button x:Name="URLResources_Search_Icon">
+                                        <FontIcon Glyph="&#xE70E;" Foreground="{StaticResource ControlBar_Text}" 
                                               Width="{StaticResource URLResourcesSearch_Icon_Size}" 
                                               Height="{StaticResource URLResourcesSearch_Icon_Size}"
                                               Margin="{StaticResource URLResourcesSearch_Icon_Margin}"
                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    <TextBox x:Name="URLResources_Search_TextBox" Grid.Column="1" Height="{StaticResource URLResourcesSearch_TextBox_Height}"
-                                             VerticalAlignment="Center"/>
-                                    <Button x:Name="URLResources_Search_Close" Grid.Column="3" Width="40" Height="20" >
-                                        <FontIcon Glyph="&#xE971;" Foreground="{StaticResource ControlBar_Text}"/>
                                     </Button>
+                                    <TextBox x:Name="URLResources_Search_TextBox" Grid.Column="1"
+                                             Height="{StaticResource URLResourcesSearch_TextBox_Height}"
+                                             VerticalAlignment="Center" Style="{StaticResource DarkSearchBox}" PlaceholderText="URL Resource"/>
+                                    <Button x:Name="URLResources_Search_PreLoad" Content="PreLoad" Grid.Column="2"
+                                               Foreground="{StaticResource StatusBar_Text}" Style="{StaticResource TextButton}" />
+                                    <Button x:Name="URLResources_Search_Online" Content="Online" Grid.Column="3"
+                                               Foreground="{StaticResource StatusBar_Text}" Style="{StaticResource TextButton}" />
                                 </Grid>
                                 <Grid x:Name="VolumeSliderGrid" Grid.ColumnSpan="2" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center"
                                       Background="{StaticResource StatusBar_Bg}" Margin="0,0,25,0" Visibility="Collapsed" Opacity="0" RenderTransformOrigin="0, .5">

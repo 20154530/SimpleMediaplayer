@@ -9,7 +9,10 @@
     mc:Ignorable="d" Loaded="RootPage_Loaded" >
 
     <Grid x:Name="RootPanel" Background="Black">
-        <Image Source="Icon/Button/Mou.jpg" Stretch="Uniform"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Image Source="Icon/Button/Mou.jpg" Stretch="Uniform" />
         <local:YMediaPlayer x:Name="_MediaPlayer" AreTransportControlsEnabled="False" Stretch="Uniform"/>
         <local:ControlBar x:Name="_MediaPlayer_ControlBar" />
     </Grid>

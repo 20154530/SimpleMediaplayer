@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.Devices.Input;
+using Windows.UI.Composition.Interactions;
 
 namespace SimpleMediaplayer
 {
@@ -35,14 +36,36 @@ namespace SimpleMediaplayer
 
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
-            attachedControlbar.ShowVolumeBar();
-            attachedControlbar.SetVolumeIncrement(e.GetCurrentPoint(null).Properties.MouseWheelDelta / 120 );
+            switch (e.Pointer.PointerDeviceType)
+            {
+                case PointerDeviceType.Mouse:
+                    attachedControlbar.ShowVolumeBar();
+                    attachedControlbar.SetVolumeIncrement(e.GetCurrentPoint(null).Properties.MouseWheelDelta / 120);
+                    break;
+            }
+
             base.OnPointerWheelChanged(e);
+        }
+
+        protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
+        {
+            attachedControlbar.ShowVolumeBar();
+            if (!e.IsInertial)
+                switch (e.PointerDeviceType)
+                {
+                    case PointerDeviceType.Touch:
+                        
+                        attachedControlbar.SetVolumeIncrement(Math.Round(0 - e.Delta.Translation.Y));
+                        break;
+                }
+
+            base.OnManipulationDelta(e);
         }
 
         public YMediaPlayer()
         {
             this.DefaultStyleKey = typeof(YMediaPlayer);
+            this.ManipulationMode = ManipulationModes.All;
         }
     }
 }

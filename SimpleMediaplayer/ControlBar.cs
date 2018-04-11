@@ -15,6 +15,7 @@ using Windows.UI.ViewManagement;
 using Windows.Graphics.Display;
 using Windows.Devices.Input;
 using System.Diagnostics;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace SimpleMediaplayer
 {
@@ -31,7 +32,6 @@ namespace SimpleMediaplayer
         private bool IsAdditionSettingVisible = false;
         private bool IsFullWindow = false;
         public bool IsVisible { get; set; }
-
 
         #region 正在播放的文件名
         private static readonly DependencyProperty NowPlayProperty = DependencyProperty.RegisterAttached("NowPlay", typeof(String), typeof(ControlBar),
@@ -147,6 +147,7 @@ namespace SimpleMediaplayer
 
         private void OpenUrlRescourse_Click(object sender, RoutedEventArgs e)
         {
+            VisualStateManager.GoToState(this, "PlayListHide", false);
             if (IsURLResourcesSearchVisible)
                 VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
             else

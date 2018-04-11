@@ -4,7 +4,177 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 
+
+
     <!--polylineButton-->
+
+    <!--SearchBox-->
+    <Style x:Key="DarkSearchBox" TargetType="TextBox">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Bg_D}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_D}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
+                                                                           Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Bg_D}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_D}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_R}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
+                                                                           Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Bg_R}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_R}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_F}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
+                                                                           Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Bg_F}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource DarkSearchBox_Fg_F}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border x:Name="BorderElement"
+                                Margin="0,5,0,5"
+                                    Background="{StaticResource DarkSearchBox_Bg_N}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    />
+                        <ContentPresenter x:Name="HeaderContentPresenter"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          Content="{TemplateBinding Header}"
+                                          Foreground="{StaticResource DarkSearchBox_Fg_N}"
+                                          FontWeight="Normal"
+                                          TextWrapping="{TemplateBinding TextWrapping}"
+                                          Visibility="Collapsed"
+                                          x:DeferLoadStrategy="Lazy" />
+                        <ScrollViewer x:Name="ContentElement"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                          HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                          IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                          IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                          IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                          Margin="{TemplateBinding BorderThickness}"
+                                          Padding="{TemplateBinding Padding}"
+                                          Foreground="{StaticResource DarkSearchBox_Fg_F}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding TextAlignment}"
+                                          VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          ZoomMode="Disabled" />
+                        <TextBlock x:Name="PlaceholderTextContentPresenter"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   Foreground="{StaticResource DarkSearchBox_Fg_N}"
+                                   IsHitTestVisible="False"
+                                   Margin="{TemplateBinding BorderThickness}"
+                                   Padding="{TemplateBinding Padding}"
+                                   Text="{TemplateBinding PlaceholderText}"
+                                   TextWrapping="{TemplateBinding TextWrapping}"
+                                   TextAlignment="{TemplateBinding TextAlignment}" />
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding TextAlignment}"-->
+
+    <!--TextButton-->
+    <Style x:Key="TextButton" TargetType="Button">
+        <Setter Property="FontSize" Value="{StaticResource StatusBar_Text_Size}"/>
+        <Setter Property="Width" Value="{StaticResource URLResourcesSearch_Button_Width}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent" RenderTransformOrigin=".5 .5">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" >
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX"
+                                                             To="1.2" Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                                             To="1.2" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="ScaleTransform" />
+                        </Grid.RenderTransform>
+                        <TextBlock x:Name="ContentBlock" FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}"
+                                       TextDecorations="None" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!--BatteryBar-->
     <Style x:Key="BatteryBar"
