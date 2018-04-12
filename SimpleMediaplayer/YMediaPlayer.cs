@@ -11,6 +11,10 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.Devices.Input;
 using Windows.UI.Composition.Interactions;
+using Windows.UI.Composition;
+using Windows.UI.Xaml.Hosting;
+using Microsoft.Graphics.Canvas.Effects;
+using Windows.UI;
 
 namespace SimpleMediaplayer
 {
@@ -49,12 +53,11 @@ namespace SimpleMediaplayer
 
         protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
         {
-            attachedControlbar.ShowVolumeBar();
             if (!e.IsInertial)
                 switch (e.PointerDeviceType)
                 {
                     case PointerDeviceType.Touch:
-                        
+                        attachedControlbar.ShowVolumeBar();
                         attachedControlbar.SetVolumeIncrement(Math.Round(0 - e.Delta.Translation.Y));
                         break;
                 }
@@ -67,5 +70,8 @@ namespace SimpleMediaplayer
             this.DefaultStyleKey = typeof(YMediaPlayer);
             this.ManipulationMode = ManipulationModes.All;
         }
+
+
+
     }
 }

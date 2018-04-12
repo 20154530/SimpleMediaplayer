@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Core;
 using Windows.Devices.Input;
 using Windows.Graphics.Display;
+using Windows.Storage;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -40,6 +41,8 @@ namespace SimpleMediaplayer
             CheckStatusBar();
             SetOrientation();
             this.InitializeComponent();
+            this.Loaded += RootPage_Loaded;
+          
         }
 
         private async void CheckStatusBar()

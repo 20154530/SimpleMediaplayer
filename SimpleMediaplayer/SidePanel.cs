@@ -74,4 +74,27 @@ namespace SimpleMediaplayer
             return finalSize;
         }
     }
+
+    public class DevidePanel : Panel
+    {
+        private Size GridSize;
+        
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            double height = 0;
+            foreach (var child in Children)
+            {
+                child.Measure(availableSize);
+                height = child.DesiredSize.Height > height ? child.DesiredSize.Height : height;
+            }
+
+            return new Size(availableSize.Width, height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            
+            return finalSize;
+        }
+    }
 }

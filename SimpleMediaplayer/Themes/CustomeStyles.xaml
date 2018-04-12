@@ -32,7 +32,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
                                                                            Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{StaticResource DarkSearchBox_Fg_D}" />
+                                                                        Value="{StaticResource DarkSearchBox_Bg_D}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                            Storyboard.TargetProperty="Background">
@@ -42,7 +42,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
                                                                            Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{StaticResource DarkSearchBox_Fg_D}" />
+                                                                        Value="{StaticResource DarkSearchBox_Bg_D}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -60,9 +60,9 @@
                                                                         Value="{StaticResource DarkSearchBox_Bg_R}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
-                                                                           Storyboard.TargetProperty="Foreground">
+                                                                           Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{StaticResource DarkSearchBox_Fg_R}" />
+                                                                        Value=".6" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -79,9 +79,9 @@
                                                                         Value="{StaticResource DarkSearchBox_Bg_F}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
-                                                                           Storyboard.TargetProperty="Foreground">
+                                                                           Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{StaticResource DarkSearchBox_Fg_F}" />
+                                                                        Value="1" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -94,14 +94,15 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     />
                         <ContentPresenter x:Name="HeaderContentPresenter"
-                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                          Content="{TemplateBinding Header}"
-                                          Foreground="{StaticResource DarkSearchBox_Fg_N}"
-                                          FontWeight="Normal"
-                                          TextWrapping="{TemplateBinding TextWrapping}"
-                                          Visibility="Collapsed"
-                                          x:DeferLoadStrategy="Lazy" />
-                        <ScrollViewer x:Name="ContentElement"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              Content="{TemplateBinding Header}"
+                                              FontWeight="Normal"
+                                              Foreground="{ThemeResource TextControlHeaderForeground}"
+                                              Margin="0,0,0,8"
+                                              TextWrapping="{TemplateBinding TextWrapping}"
+                                              Visibility="Collapsed"
+                                              x:DeferLoadStrategy="Lazy" />
+                        <ScrollViewer x:Name="ContentElement" Opacity=".4"
                                           AutomationProperties.AccessibilityView="Raw"
                                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                           HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
@@ -132,9 +133,6 @@
         </Setter>
     </Style>
 
-    <!--           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding TextAlignment}"-->
-
     <!--TextButton-->
     <Style x:Key="TextButton" TargetType="Button">
         <Setter Property="FontSize" Value="{StaticResource StatusBar_Text_Size}"/>
@@ -157,7 +155,6 @@
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
-
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
 
@@ -191,6 +188,13 @@
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
+    <!--Button-->
+    <Style x:Key="SimpleButton" TargetType="Button">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="MaxHeight" Value="40"/>
+        <Setter Property="MaxWidth" Value="40"/>
+    </Style>
+    
     <!--Thumb-->
     <Style x:Key="DarkThumbStyle"
            TargetType="Thumb">

@@ -4,7 +4,7 @@
     <!--颜色配置-->
     <SolidColorBrush x:Key="DefaultMainPage_Bg" Color="#000000" />
 
-    <SolidColorBrush x:Key="StatusBar_Bg" Color="#a0000000" />
+    <Color x:Key="StatusBar_Bg" >#a0000000</Color>
     <SolidColorBrush x:Key="StatusBar_Text" Color="#c0ffffff" />
     <SolidColorBrush x:Key="StatusBar_Seperator_bg" Color="#60ffffff"/>
 
@@ -35,8 +35,6 @@
 
     <SolidColorBrush x:Key="ControlBar_Flyout_Bg" Color="Transparent" />
     <SolidColorBrush x:Key="ControlBar_Text" Color="#b0ffffff" />
-
-    <SolidColorBrush x:Key="PlayList_Bg" Color="#a0000000"/>
 
 
     <!--大小配置-->
