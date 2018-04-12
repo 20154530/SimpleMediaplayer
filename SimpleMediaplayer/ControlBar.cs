@@ -27,11 +27,25 @@ using System.Net.Http;
 using System.Security.Permissions;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.Storage.Pickers;
+using Windows.Foundation;
+using Windows.Storage.AccessCache;
+using System.Security.Principal;
+using System.Text;
+using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SimpleMediaplayer
 {
     public sealed class ControlBar : Control
     {
+        //NOVisial
+        private String SaveLocal = null;
+        private bool IsVolumeBarVisible = false;
+        private bool IsAdditionSettingVisible = false;
+        private bool IsFullWindow = false;
+        public bool IsVisible { get; set; }
+
         private DispatcherTimer ProgressTimer;
         private DispatcherTimer VolumeSliderVisiblityTimer;
 
@@ -41,13 +55,6 @@ namespace SimpleMediaplayer
         private Slider VolumeSlider;
         private TextBox URLResourcesSearchTextBox;
         private SymbolIcon VolumeMutePopupIcon;
-
-        //NOVisial
-        private String SaveLocal = @"D:\DB\";
-        private bool IsVolumeBarVisible = false;
-        private bool IsAdditionSettingVisible = false;
-        private bool IsFullWindow = false;
-        public bool IsVisible { get; set; }
 
         //DependenceProperty
         #region 自动隐藏
@@ -96,6 +103,7 @@ namespace SimpleMediaplayer
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
+            VisualStateManager.GoToState(this, "SettingButton_Normal", false);
             VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
             IsVisible = true;
         }
@@ -129,6 +137,9 @@ namespace SimpleMediaplayer
 
             var URLResources_Search_PreLoad = GetTemplateChild("URLResources_Search_PreLoad") as Button;
             URLResources_Search_PreLoad.Click += URLResources_Search_PreLoad_CLick;
+
+            var SaveLocal = GetTemplateChild("MediaControlsCommandBar_Additionals_SaveLocal") as Button;
+            SaveLocal.Click += SaveLocal_Click;
             #endregion
 
             #region needReference
@@ -171,12 +182,27 @@ namespace SimpleMediaplayer
                 }
         }
 
+        private async void SaveLocal_Click(object sender, RoutedEventArgs e)
+        {
+            FolderPicker pick = new FolderPicker();
+            pick.FileTypeFilter.Add(".mp3");
+            pick.FileTypeFilter.Add(".mp4");
+            pick.FileTypeFilter.Add(".wmv");
+            IAsyncOperation<StorageFolder> folderTask = pick.PickSingleFolderAsync();
+
+            StorageFolder folder = await folderTask;
+            StorageFolder Folder = null;
+            if (folder != null)
+            {
+                Folder = folder;
+                SaveLocal = StorageApplicationPermissions.FutureAccessList.Add(folder);
+            }
+        }
+
         private void SettingButton_Click(object sender, RoutedEventArgs e)//Setting
         {
             if (IsAdditionSettingVisible)
-           
                 VisualStateManager.GoToState(this, "SettingButton_Normal", false);
-
             else
                 VisualStateManager.GoToState(this, "SettingButton_Active", false);
 
@@ -306,6 +332,7 @@ namespace SimpleMediaplayer
         public void Show()
         {
             IsVisible = true;
+            AutoHideControlBar();
             VisualStateManager.GoToState(this, "ControlPanelFadeIn", false);
         }
 
@@ -341,33 +368,75 @@ namespace SimpleMediaplayer
         #endregion
 
         #region 私有功能方法
+        private async void SavePath()
+        {
+            StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
+          
+            StorageFile file = await folderLocal.CreateFileAsync(
+                 "UserSettings.dat", CreationCollisionOption.ReplaceExisting);
+
+            UserdefaultSettings settings = new UserdefaultSettings();
+            settings.Savelocal = SaveLocal.ToString();
+
+            using (Stream stream = new FileStream(file.CreateSafeFileHandle(), FileAccess.ReadWrite))
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, settings);
+            }
+        }
+
         private async void DownloadFile(String Uri)
         {
             Task t = new Task(() =>
             {
-                using (HttpClient httpClient = new HttpClient())
+                try
                 {
-                    using (HttpResponseMessage response = httpClient.GetAsync(new Uri(Uri)).Result)
+                    using (HttpClient httpClient = new HttpClient())
                     {
-                        var filename = Uri.Split('/');
-                        Write(filename[filename.Length - 1], response.Content.ReadAsByteArrayAsync().Result);
+                        using (HttpResponseMessage response = httpClient.GetAsync(new Uri(Uri)).Result)
+                        {
+                            var filename = Uri.Split('/');
+                            Write(filename[filename.Length - 1], response.Content.ReadAsByteArrayAsync().Result);
+                        }
                     }
+                }
+                catch (Exception e)
+                {
+
                 }
             });
             t.Start();
             await t;
         }
 
+        private async void CheckSaveloc()
+        {
+            StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
+            StorageFile file = (StorageFile)await folderLocal.TryGetItemAsync("UserSettings.dat");
+            if ( file != null)
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                UserdefaultSettings setting;
+                using (FileStream stream = new FileStream(file.CreateSafeFileHandle(), FileAccess.Read))
+                {
+                    setting = (UserdefaultSettings)formatter.Deserialize(stream);
+                    SaveLocal = setting.Savelocal;
+                }
+            }
+        }
+
         private async void Write(string fileName, byte[] html)
         {
             try
             {
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
-               // Debug.WriteLine(ApplicationData.Current.LocalFolder.Path);
+                StorageFolder folder = KnownFolders.MusicLibrary;
+                CheckSaveloc();
+                if (SaveLocal != null)
+                    folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocal);
                 StorageFile a = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
                 using (StorageStreamTransaction x = await a.OpenTransactedWriteAsync())
                 {
-                    using(DataWriter w = new DataWriter(x.Stream))
+                    using (DataWriter w = new DataWriter(x.Stream))
                     {
                         w.WriteBytes(html);
                         x.Stream.Size = await w.StoreAsync();
@@ -413,11 +482,13 @@ namespace SimpleMediaplayer
 
         private async void AutoHideControlBar()
         {
-            Task t = new Task(() => { Thread.Sleep(5000); });
-            t.Start();
-            await t;
             if (AutoHide)
+            {
+                Task t = new Task(() => { Thread.Sleep(5000); });
+                t.Start();
+                await t;
                 Hide();
+            }
         }
         #endregion
 
@@ -456,6 +527,18 @@ namespace SimpleMediaplayer
 
     }
 
+    [Serializable]
+    public class UserdefaultSettings
+    {
+        public String Savelocal { get; set; }
+
+
+        public UserdefaultSettings()
+        {
+
+        }
+    }
+
     public class MediaInfo
     {
         public String FileName { get; set; }
@@ -481,7 +564,7 @@ namespace SimpleMediaplayer
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            Color convert = (Color)value; 
+            Color convert = (Color)value;
             return Color.FromArgb(0, convert.R, convert.G, convert.B);
         }
 

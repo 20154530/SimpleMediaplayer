@@ -262,30 +262,6 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
-                            <!--<VisualStateGroup x:Name="MediaControlsCommandBar_Additionals_State">
-                                <VisualState x:Name="MediaControlsCommandBar_Additionals_Show">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0.2" To="1"/>
-                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:0.5" To="0"/>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MediaControlsCommandBar_Additionals_Hide" >
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0.5" To="0"/>
-                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:0.5" To="{Binding ElementName=MediaControlsCommandBar_Additionals,Path=ActualHeight,Converter={StaticResource WidthConverter}}"/>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="URLResources_Search" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>-->
                             <VisualStateGroup x:Name="PlayPauseStates">
                                 <VisualState x:Name="PlayState" />
                                 <VisualState x:Name="PauseState">
@@ -380,8 +356,8 @@
                                                          Duration="0:0:0.5" To="0" />
                                         <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals" Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0.5" To="0"/>
-                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:0.5" To="{Binding ElementName=MediaControlsCommandBar_Additionals,Path=ActualHeight,Converter={StaticResource WidthConverter}}"/>
+                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.5" To="0"/>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MediaControlsCommandBar_Additionals" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
@@ -393,8 +369,8 @@
                                                          Duration="0:0:0.5" To="180" />
                                         <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals" Storyboard.TargetProperty="Opacity"
                                                          Duration="0:0:0.2" To="1"/>
-                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_TranslateTransform" Storyboard.TargetProperty="Y"
-                                                         Duration="0:0:0.5" To="0"/>
+                                        <DoubleAnimation Storyboard.TargetName="MediaControlsCommandBar_Additionals_ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                                         Duration="0:0:0.5" To="1"/>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MediaControlsCommandBar_Additionals" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible"/>
                                         </ObjectAnimationUsingKeyFrames>
@@ -510,7 +486,7 @@
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button x:Name="URLResources_Search_Icon" BorderThickness="0">
+                                    <Button x:Name="URLResources_Search_Icon" BorderThickness="0" Background="Transparent">
                                         <FontIcon Glyph="&#xE70E;" Foreground="{StaticResource ControlBar_Text}" 
                                               Width="{StaticResource URLResourcesSearch_Icon_Size}" 
                                               Height="{StaticResource URLResourcesSearch_Icon_Size}"
@@ -547,25 +523,32 @@
                                   RenderTransformOrigin="0.5,0.5"
                                   VerticalAlignment="Bottom">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="auto" />
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="TranslateVertical" />
                                 </Grid.RenderTransform>
-                                <StackPanel x:Name="MediaControlsCommandBar_Additionals" Visibility="Collapsed" Orientation="Horizontal" Height="40">
-                                    <StackPanel.RenderTransform>
-                                        <TranslateTransform x:Name="MediaControlsCommandBar_Additionals_TranslateTransform" ></TranslateTransform>
-                                    </StackPanel.RenderTransform>
-                                    <Button x:Name="MediaControlsCommandBar_Additionals_SaveLocal" Style="{StaticResource SimpleButton}">
-                                        <FontIcon Glyph="&#xE792;" Foreground="{StaticResource ControlBar_Text}" 
+                                <Grid x:Name="MediaControlsCommandBar_Additionals" Visibility="Collapsed" RenderTransformOrigin=".5 1">
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform x:Name="MediaControlsCommandBar_Additionals_ScaleTransform" />
+                                    </Grid.RenderTransform>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition Height="2"/>
+                                    </Grid.RowDefinitions>
+                                    <local:DevidePanel >
+                                        <Button x:Name="MediaControlsCommandBar_Additionals_SaveLocal" Style="{StaticResource SimpleButton}">
+                                            <FontIcon Glyph="&#xE792;" Foreground="{StaticResource ControlBar_Text}" 
                                               Width="{StaticResource URLResourcesSearch_Icon_Size}" 
                                               Height="{StaticResource URLResourcesSearch_Icon_Size}"
                                               Margin="{StaticResource URLResourcesSearch_Icon_Margin}"
                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                    </Button>
-                                </StackPanel>
+                                        </Button>
+                                    </local:DevidePanel>
+                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Fill="{StaticResource StatusBar_Seperator_bg}"/>
+                                </Grid>
                                 <Border x:Name="MediaTransportControls_Timeline_Border"
                                         Grid.Row="1">
                                     <Grid x:Name="MediaTransportControls_Timeline_Grid">
@@ -876,4 +859,5 @@
 
     <!--CommandBar-->
 
+   
 </ResourceDictionary>

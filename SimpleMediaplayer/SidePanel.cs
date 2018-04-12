@@ -77,8 +77,6 @@ namespace SimpleMediaplayer
 
     public class DevidePanel : Panel
     {
-        private Size GridSize;
-        
         protected override Size MeasureOverride(Size availableSize)
         {
             double height = 0;
@@ -93,7 +91,14 @@ namespace SimpleMediaplayer
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            
+            double divideWidth = finalSize.Width / Children.Count;
+            double t = 0, d = 0;
+            foreach (var child in Children)
+            {
+                t = (divideWidth - child.DesiredSize.Width) / 2;
+                child.Arrange(new Rect(t + d, 0, child.DesiredSize.Width, child.DesiredSize.Height));
+                d += divideWidth;
+            }
             return finalSize;
         }
     }

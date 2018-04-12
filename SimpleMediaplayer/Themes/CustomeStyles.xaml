@@ -191,8 +191,8 @@
     <!--Button-->
     <Style x:Key="SimpleButton" TargetType="Button">
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="MaxHeight" Value="40"/>
-        <Setter Property="MaxWidth" Value="40"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Height" Value="40"/>
     </Style>
     
     <!--Thumb-->

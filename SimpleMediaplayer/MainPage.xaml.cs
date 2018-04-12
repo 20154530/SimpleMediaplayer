@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Media.Playback;
-using System.Diagnostics;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Devices.Sensors;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
+
 using Windows.UI.Core;
-using Windows.Devices.Input;
-using Windows.Graphics.Display;
-using Windows.Storage;
+using Windows.ApplicationModel.Core;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -42,16 +29,22 @@ namespace SimpleMediaplayer
             SetOrientation();
             this.InitializeComponent();
             this.Loaded += RootPage_Loaded;
-          
+            
         }
 
         private async void CheckStatusBar()
         {
+            
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 _Statusbar = StatusBar.GetForCurrentView();
                 await _Statusbar.HideAsync();
             }
+            else
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            }
+         
         }
 
         private void SetOrientation()

@@ -38,6 +38,7 @@ namespace SimpleMediaplayer
             base.OnTapped(e);
         }
 
+        
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
             switch (e.Pointer.PointerDeviceType)
@@ -50,6 +51,8 @@ namespace SimpleMediaplayer
 
             base.OnPointerWheelChanged(e);
         }
+
+
 
         protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
         {
