@@ -6,6 +6,7 @@
     <local:StoHMSConverter x:Key="StoHMSConverter"/>
     <local:TimeLineConverter x:Key="TimeLineConverter"/>
     <local:AlphaConverter x:Key="AlphaConverter"/>
+    <local:NotConverter x:Key="NotConverter"/>
 
     <!--Data-->
     <local:SystemInfo x:Key="Info" />
@@ -300,22 +301,26 @@
                             <VisualStateGroup x:Name="VolumeMuteState">
                                 <VisualState x:Name="MutePopupShow">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0.5" To="1"/>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:2.5" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:3" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="MutePopupHide">
-                                    <Storyboard>
+                                <VisualState x:Name="MutePopupHide"/>
+                                <!--<Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Opacity"
-                                                         Duration="0:0:0.5" To="0"/>
+                                                         BeginTime="0:0:2" Duration="0:0:0.5" To="0"/>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                    </Storyboard>-->
+
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="FullWindowStates">
                                 <VisualState x:Name="NonFullWindowState" />

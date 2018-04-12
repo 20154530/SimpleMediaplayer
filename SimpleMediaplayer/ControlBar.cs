@@ -40,6 +40,7 @@ namespace SimpleMediaplayer
     public sealed class ControlBar : Control
     {
         //NOVisial
+        private static ControlBar SelfReference;
         private String SaveLocal = null;
         private bool IsVolumeBarVisible = false;
         private bool IsAdditionSettingVisible = false;
@@ -57,6 +58,22 @@ namespace SimpleMediaplayer
         private SymbolIcon VolumeMutePopupIcon;
 
         //DependenceProperty
+        #region 自动隐藏
+        private static readonly DependencyProperty MuteProperty = DependencyProperty.RegisterAttached("Mute", typeof(bool), typeof(ControlBar),
+            new PropertyMetadata(false, new PropertyChangedCallback(OnMuteChanged)));
+
+        private static void OnMuteChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            VisualStateManager.GoToState(SelfReference, "MutePopupHide", false);
+        }
+
+        public bool Mute
+        {
+            get { return (bool)this.GetValue(MuteProperty); }
+            set { this.SetValue(MuteProperty, value); }
+        }
+        #endregion
+
         #region 自动隐藏
         private static readonly DependencyProperty AutoHideProperty = DependencyProperty.RegisterAttached("AutoHide", typeof(bool), typeof(ControlBar),
             new PropertyMetadata(true));
@@ -197,6 +214,9 @@ namespace SimpleMediaplayer
                 Folder = folder;
                 SaveLocal = StorageApplicationPermissions.FutureAccessList.Add(folder);
             }
+
+            if (SaveLocal != null)
+                SavePathToLocal();
         }
 
         private void SettingButton_Click(object sender, RoutedEventArgs e)//Setting
@@ -213,7 +233,6 @@ namespace SimpleMediaplayer
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
             VisualStateManager.GoToState(this, "URLResources_Search_Show", false);
-
         }
 
         private void FullWindowButton_Click(object sender, RoutedEventArgs e)//FullWindow
@@ -249,7 +268,11 @@ namespace SimpleMediaplayer
         private void VolumeSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)//VolumeSlider
         {
             if (e.NewValue == 0 || e.OldValue == 0)
-                MutePopupAnimation();
+            {
+                VisualStateManager.GoToState(this, "MutePopupHide", false);
+                VolumeMutePopupIcon.Symbol = VolumeSlider.Value == 0 ? Symbol.Mute : Symbol.Volume;
+                VisualStateManager.GoToState(this, "MutePopupShow", false);
+            }
         }
 
         private void VolumeSlider_PointerMoved(object sender, PointerRoutedEventArgs e)
@@ -368,10 +391,10 @@ namespace SimpleMediaplayer
         #endregion
 
         #region 私有功能方法
-        private async void SavePath()
+        private async void SavePathToLocal()
         {
             StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
-          
+
             StorageFile file = await folderLocal.CreateFileAsync(
                  "UserSettings.dat", CreationCollisionOption.ReplaceExisting);
 
@@ -412,8 +435,9 @@ namespace SimpleMediaplayer
         private async void CheckSaveloc()
         {
             StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
+            Debug.WriteLine(folderLocal.Path);
             StorageFile file = (StorageFile)await folderLocal.TryGetItemAsync("UserSettings.dat");
-            if ( file != null)
+            if (file != null)
             {
                 BinaryFormatter formatter = new BinaryFormatter();
                 UserdefaultSettings setting;
@@ -470,19 +494,9 @@ namespace SimpleMediaplayer
             HideVolumeBar();
         }
 
-        private async void MutePopupAnimation()
-        {
-            VolumeMutePopupIcon.Symbol = VolumeSlider.Value == 0 ? Symbol.Mute : Symbol.Volume;
-            VisualStateManager.GoToState(this, "MutePopupShow", false);
-            Task t = new Task(() => { Thread.Sleep(2000); });
-            t.Start();
-            await t;
-            VisualStateManager.GoToState(this, "MutePopupHide", false);
-        }
-
         private async void AutoHideControlBar()
         {
-            if (AutoHide)
+            if (AutoHide && AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Playing))
             {
                 Task t = new Task(() => { Thread.Sleep(5000); });
                 t.Start();
@@ -496,6 +510,7 @@ namespace SimpleMediaplayer
         {
             this.DefaultStyleKey = typeof(ControlBar);
             this.Loaded += OnLoaded;
+            SelfReference = this;
 
             //进度条更新
             ProgressTimer = new DispatcherTimer();
@@ -508,7 +523,6 @@ namespace SimpleMediaplayer
             VolumeSliderVisiblityTimer.Tick += VolumeSliderVisiblityTimer_Tick;
 
         }
-
     }
 
     public class VolumeMuteStateTrigger : StateTriggerBase
@@ -613,6 +627,19 @@ namespace SimpleMediaplayer
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class NotConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value;
         }
     }
     #endregion
