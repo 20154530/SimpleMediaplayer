@@ -10,7 +10,6 @@ using Windows.Devices.Sensors;
 using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 
-// https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
 namespace SimpleMediaplayer
 {

@@ -30,7 +30,6 @@ namespace SimpleMediaplayer
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            
         }
 
         /// <summary>
@@ -41,6 +40,9 @@ namespace SimpleMediaplayer
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
+            var custom = new Dictionary<string, string>();
+            custom.Add(".mp4", "video/mp4");
+            SYEngine.Core.Initialize(custom);
 
             // 不要在窗口已包含内容时重复应用程序初始化，
             // 只需确保窗口处于活动状态

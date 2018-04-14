@@ -24,7 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net.Http;
-using System.Security.Permissions;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Storage.Pickers;
@@ -33,19 +32,23 @@ using Windows.Storage.AccessCache;
 using System.Security.Principal;
 using System.Text;
 using Newtonsoft.Json;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SimpleMediaplayer
 {
     public sealed class ControlBar : Control
     {
         //NOVisial
-        private static ControlBar SelfReference;
+        private enum SaveType
+        {
+            config = 0,//存储设置
+            video = 1,
+            audio = 2,
+        }
         private String SaveLocal = null;
+        private String SaveLocal_Path = null;
         private bool IsVolumeBarVisible = false;
         private bool IsAdditionSettingVisible = false;
         private bool IsFullWindow = false;
-        public bool IsVisible { get; set; }
 
         private DispatcherTimer ProgressTimer;
         private DispatcherTimer VolumeSliderVisiblityTimer;
@@ -58,19 +61,33 @@ namespace SimpleMediaplayer
         private SymbolIcon VolumeMutePopupIcon;
 
         //DependenceProperty
-        #region 自动隐藏
-        private static readonly DependencyProperty MuteProperty = DependencyProperty.RegisterAttached("Mute", typeof(bool), typeof(ControlBar),
-            new PropertyMetadata(false, new PropertyChangedCallback(OnMuteChanged)));
-
-        private static void OnMuteChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        #region 强制软件解码
+        public bool ForceSoftwareDecode
         {
-            VisualStateManager.GoToState(SelfReference, "MutePopupHide", false);
+            get { return (bool)GetValue(ForceSoftwareDecodeProperty); }
+            set { SetValue(ForceSoftwareDecodeProperty, value); }
         }
+        public static readonly DependencyProperty ForceSoftwareDecodeProperty =
+            DependencyProperty.Register("ForceSoftwareDecode", typeof(bool), typeof(ControlBar), new PropertyMetadata(false));
+        #endregion
 
-        public bool Mute
+        #region 可见性
+        public bool IsVisible
         {
-            get { return (bool)this.GetValue(MuteProperty); }
-            set { this.SetValue(MuteProperty, value); }
+            get { return (bool)GetValue(IsVisibleProperty); }
+            set { SetValue(IsVisibleProperty, value); }
+        }
+        public static readonly DependencyProperty IsVisibleProperty =
+            DependencyProperty.Register("IsVisible", typeof(bool), typeof(ControlBar), new PropertyMetadata(true));
+        #endregion
+
+        #region 文字提示
+        private static readonly DependencyProperty NotifyWordsProperty = DependencyProperty.RegisterAttached("NotifyWords", typeof(string), typeof(ControlBar),
+            new PropertyMetadata(""));
+        public string NotifyWords
+        {
+            get { return (string)this.GetValue(NotifyWordsProperty); }
+            set { this.SetValue(NotifyWordsProperty, value); }
         }
         #endregion
 
@@ -205,13 +222,11 @@ namespace SimpleMediaplayer
             pick.FileTypeFilter.Add(".mp3");
             pick.FileTypeFilter.Add(".mp4");
             pick.FileTypeFilter.Add(".wmv");
-            IAsyncOperation<StorageFolder> folderTask = pick.PickSingleFolderAsync();
+            StorageFolder folder = await pick.PickSingleFolderAsync();
 
-            StorageFolder folder = await folderTask;
-            StorageFolder Folder = null;
             if (folder != null)
             {
-                Folder = folder;
+                SaveLocal_Path = folder.Path;
                 SaveLocal = StorageApplicationPermissions.FutureAccessList.Add(folder);
             }
 
@@ -288,10 +303,13 @@ namespace SimpleMediaplayer
         #region 播放事件处理
         private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            var picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".mp3");
             picker.FileTypeFilter.Add(".mp4");
-            IReadOnlyList<Windows.Storage.StorageFile> file = await picker.PickMultipleFilesAsync();
+            picker.FileTypeFilter.Add(".wmv");
+            picker.FileTypeFilter.Add(".flv");
+            picker.FileTypeFilter.Add(".mkv");
+            IReadOnlyList<StorageFile> file = await picker.PickMultipleFilesAsync();
             if (file.Count != 0)
             {
                 NowPlay = file[0].Name;
@@ -299,21 +317,36 @@ namespace SimpleMediaplayer
                 NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
                 AttachedMediaPlayer.Source = NowPlaySource;
             }
+            //SYEngine.Core.ForceSoftwareDecode = true;
         }
 
         private void URLResources_Search_Online_Click(object sender, RoutedEventArgs args)
         {
-            var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
-            NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
-            AttachedMediaPlayer.Source = NowPlaySource;
+            try
+            {
+                var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
+                NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                AttachedMediaPlayer.Source = NowPlaySource;
+            }
+            catch (Exception)
+            {
+                WordsNotifyPopupAni("URL is not a MediaFile,or type is not support!");
+            }
         }
 
         private void URLResources_Search_PreLoad_CLick(object sender, RoutedEventArgs args)
         {
-            var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
-            NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
-            DownloadFile(URLResourcesSearchTextBox.Text.ToString());
-            AttachedMediaPlayer.Source = NowPlaySource;
+            try
+            {
+                var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
+                NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                DownloadFile(URLResourcesSearchTextBox.Text.ToString());
+                AttachedMediaPlayer.Source = NowPlaySource;
+            }
+            catch (Exception)
+            {
+                WordsNotifyPopupAni("URL is not a MediaFile,or type is not support!");
+            }
         }
 
         private async void mediasource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
@@ -321,7 +354,6 @@ namespace SimpleMediaplayer
             var _Span = sender.Duration.GetValueOrDefault();
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                VolumeSlider.Value = 50;
                 ProgressSlider.Minimum = 0;
                 ProgressSlider.Maximum = _Span.TotalSeconds;
                 ProgressSlider.StepFrequency = 1;
@@ -391,23 +423,17 @@ namespace SimpleMediaplayer
         #endregion
 
         #region 私有功能方法
+        //改变保存路径
         private async void SavePathToLocal()
         {
-            StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
-
-            StorageFile file = await folderLocal.CreateFileAsync(
-                 "UserSettings.dat", CreationCollisionOption.ReplaceExisting);
-
             UserdefaultSettings settings = new UserdefaultSettings();
             settings.Savelocal = SaveLocal.ToString();
 
-            using (Stream stream = new FileStream(file.CreateSafeFileHandle(), FileAccess.ReadWrite))
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, settings);
-            }
+            string s = JsonConvert.SerializeObject(settings);
+            await WriteToFile("UserSettings.dat", Encoding.Unicode.GetBytes(s), SaveType.config);
         }
 
+        //下载文件
         private async void DownloadFile(String Uri)
         {
             Task t = new Task(() =>
@@ -419,61 +445,119 @@ namespace SimpleMediaplayer
                         using (HttpResponseMessage response = httpClient.GetAsync(new Uri(Uri)).Result)
                         {
                             var filename = Uri.Split('/');
-                            Write(filename[filename.Length - 1], response.Content.ReadAsByteArrayAsync().Result);
+                            WriteToFile(filename[filename.Length - 1], response.Content.ReadAsByteArrayAsync().Result, SaveType.video).Wait();
                         }
                     }
                 }
                 catch (Exception e)
                 {
-
+                    WordsNotifyPopupAni("Please Check Your Web Connection ");
                 }
             });
             t.Start();
             await t;
         }
 
+        //检查是否有已存路径
         private async void CheckSaveloc()
         {
-            StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
-            Debug.WriteLine(folderLocal.Path);
-            StorageFile file = (StorageFile)await folderLocal.TryGetItemAsync("UserSettings.dat");
-            if (file != null)
+            byte[] bt = await ReadfromFile("UserSettings.dat");
+            string f = Encoding.Unicode.GetString(bt);
+            if (f != null)
             {
-                BinaryFormatter formatter = new BinaryFormatter();
-                UserdefaultSettings setting;
-                using (FileStream stream = new FileStream(file.CreateSafeFileHandle(), FileAccess.Read))
-                {
-                    setting = (UserdefaultSettings)formatter.Deserialize(stream);
-                    SaveLocal = setting.Savelocal;
-                }
+                UserdefaultSettings s = JsonConvert.DeserializeObject<UserdefaultSettings>(f);
+                SaveLocal = s.Savelocal;
             }
         }
 
-        private async void Write(string fileName, byte[] html)
+        //写入文件
+        private async Task WriteToFile(string fileName, byte[] file, SaveType type)
         {
             try
             {
-                StorageFolder folder = KnownFolders.MusicLibrary;
-                CheckSaveloc();
-                if (SaveLocal != null)
-                    folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocal);
-                StorageFile a = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                using (StorageStreamTransaction x = await a.OpenTransactedWriteAsync())
+                StorageFolder folder = null;
+                switch (type)
+                {
+                    case SaveType.config:  folder = ApplicationData.Current.LocalFolder;
+                        break;
+                    case SaveType.audio:
+                        folder = KnownFolders.MusicLibrary;
+                        if (SaveLocal != null)
+                            folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocal);
+                        break;
+                    case SaveType.video:
+                        folder = KnownFolders.VideosLibrary;
+                        if (SaveLocal != null)
+                            folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(SaveLocal);
+                        break;
+                }
+                //Debug.WriteLine(folder.Path);
+                StorageFile f = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                using (StorageStreamTransaction x = await f.OpenTransactedWriteAsync())
                 {
                     using (DataWriter w = new DataWriter(x.Stream))
                     {
-                        w.WriteBytes(html);
+                        w.WriteBytes(file);
                         x.Stream.Size = await w.StoreAsync();
                         await x.CommitAsync();
                     }
                 }
+                switch (type)
+                {
+                    case SaveType.config:
+                        WordsNotifyPopupAni(String.Format("Changed save location to : \"{0} \"", SaveLocal_Path));
+                        break;
+                    default:
+                        WordsNotifyPopupAni(String.Format(" {0} has been saved to : \"{1} \"", fileName, SaveLocal_Path));
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                switch (type)
+                {
+                    case SaveType.config:
+                        WordsNotifyPopupAni(String.Format("Changed save location to : \"{0} \" failed", SaveLocal_Path)); break;
+                    default:
+                        WordsNotifyPopupAni(String.Format(" Failed to save {0} to : \"{1} \"", fileName, SaveLocal_Path));
+                        break;
+                }
             }
         }
 
+        //读取文件
+        private async Task<byte[]> ReadfromFile(string fileName)
+        {
+            StorageFolder folderLocal = ApplicationData.Current.LocalFolder;
+            StorageFile file = (StorageFile)await folderLocal.TryGetItemAsync(fileName);
+            if (file != null)
+            {
+                IBuffer ibuffer = await FileIO.ReadBufferAsync(file);
+                using (DataReader read = DataReader.FromBuffer(ibuffer))
+                {
+                    byte[] s = new byte[read.UnconsumedBufferLength];
+                    read.ReadBytes(s);
+                    return s;
+                }
+            }
+            return null;
+        }
+
+        //提示弹框
+        private async void WordsNotifyPopupAni(string notify)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+             {
+                 NotifyWords = notify;
+                 VisualStateManager.GoToState(this, "WordsNotifyPopupHide", false);
+                 VisualStateManager.GoToState(this, "WordsNotifyPopupShow", false);
+             });
+        }
+
+        private void UseCore()
+        {
+
+        }
         #endregion
 
         #region 定时器异步事件
@@ -498,7 +582,7 @@ namespace SimpleMediaplayer
         {
             if (AutoHide && AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Playing))
             {
-                Task t = new Task(() => { Thread.Sleep(5000); });
+                Task t = new Task(() => { Task.Delay(5000).Wait(); });
                 t.Start();
                 await t;
                 Hide();
@@ -510,7 +594,7 @@ namespace SimpleMediaplayer
         {
             this.DefaultStyleKey = typeof(ControlBar);
             this.Loaded += OnLoaded;
-            SelfReference = this;
+            CheckSaveloc();
 
             //进度条更新
             ProgressTimer = new DispatcherTimer();
@@ -525,23 +609,6 @@ namespace SimpleMediaplayer
         }
     }
 
-    public class VolumeMuteStateTrigger : StateTriggerBase
-    {
-        private static readonly DependencyProperty VloumemuteProperty = DependencyProperty.RegisterAttached("VloumeMute", typeof(int), typeof(VolumeMuteStateTrigger),
-            new PropertyMetadata(0));
-        public int VloumeMute
-        {
-            get { return (int)GetValue(VloumemuteProperty); }
-            set
-            {
-                SetValue(VloumemuteProperty, value);
-                SetActive(value == 0);
-            }
-        }
-
-    }
-
-    [Serializable]
     public class UserdefaultSettings
     {
         public String Savelocal { get; set; }
@@ -552,97 +619,6 @@ namespace SimpleMediaplayer
 
         }
     }
-
-    public class MediaInfo
-    {
-        public String FileName { get; set; }
-        public DateTime FileLength { get; set; }
-        public Image FileScaledImage { get; set; }
-    }
-
-    #region Converters
-    public class VolumeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return Math.Round((double)value * 100);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return ((double)value / 100.00);
-        }
-    }
-
-    public class AlphaConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            Color convert = (Color)value;
-            return Color.FromArgb(0, convert.R, convert.G, convert.B);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class WidthConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return -(double)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class TimeLineConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return ((TimeSpan)value).TotalSeconds;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return TimeSpan.FromSeconds((double)value);
-        }
-    }
-
-    public class StoHMSConverter : IValueConverter
-    {
-        object IValueConverter.Convert(object value, Type targetType, object parameter, string language)
-        {
-            var hour = (double)value / 3600;
-            var min = (double)value % 3600 / 60;
-            var sec = (double)value % 3600 % 60;
-            return String.Format("{0:00}:{1:00}:{2:00}", hour, min, sec);
-        }
-
-        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class NotConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return !(bool)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return (bool)value;
-        }
-    }
-    #endregion
 
     public class SystemInfo : INotifyPropertyChanged //系统信息
     {

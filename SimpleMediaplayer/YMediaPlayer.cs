@@ -37,7 +37,6 @@ namespace SimpleMediaplayer
                 attachedControlbar.Show();
             base.OnTapped(e);
         }
-
         
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
@@ -52,7 +51,10 @@ namespace SimpleMediaplayer
             base.OnPointerWheelChanged(e);
         }
 
-
+        protected override void OnDoubleTapped(DoubleTappedRoutedEventArgs e)
+        {
+            base.OnDoubleTapped(e);
+        }
 
         protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
         {

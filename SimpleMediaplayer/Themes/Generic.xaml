@@ -1,11 +1,11 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:SimpleMediaplayer">
+
     <!--Converter-->
     <local:WidthConverter x:Key="WidthConverter"/>
     <local:StoHMSConverter x:Key="StoHMSConverter"/>
     <local:TimeLineConverter x:Key="TimeLineConverter"/>
-    <local:AlphaConverter x:Key="AlphaConverter"/>
     <local:NotConverter x:Key="NotConverter"/>
 
     <!--Data-->
@@ -299,8 +299,8 @@
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="VolumeMuteState">
-                                <VisualState x:Name="MutePopupShow">
-                                    <Storyboard>
+                                <VisualState x:Name="MutePopupShow" >
+                                    <Storyboard >
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Opacity">
                                             <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
                                             <LinearDoubleKeyFrame KeyTime="0:0:2.5" Value="1"/>
@@ -313,14 +313,22 @@
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="MutePopupHide"/>
-                                <!--<Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Opacity"
-                                                         BeginTime="0:0:2" Duration="0:0:0.5" To="0"/>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VolumeMutePopup" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="WordsNotifyPopupState">
+                                <VisualState x:Name="WordsNotifyPopupShow">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="WordsNotifyPopup" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:4.5" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:5.5" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WordsNotifyPopup" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:5.5" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>-->
-
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="WordsNotifyPopupHide"/>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="FullWindowStates">
                                 <VisualState x:Name="NonFullWindowState" />
@@ -508,7 +516,7 @@
                             </Grid>
                             <Grid x:Name="FlyoutLayer" Grid.Row="1" >
                                 <Grid.RowDefinitions>
-                                    <RowDefinition x:Name="URLResources_Search_Row" Height="auto"/>
+                                    <RowDefinition Height="auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
@@ -523,6 +531,21 @@
                                     </local:PlayList.RenderTransform>
                                    
                                 </local:PlayList>
+                                <!--Wordsnotify-->
+                                <Grid x:Name="WordsNotifyPopup" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                                      Grid.ColumnSpan="2" Grid.RowSpan="2"
+                                  Visibility="Collapsed" Opacity="0" Margin="0,0,0,20"
+                                  Background="{TemplateBinding Background}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="WordsNotifyPopup_Content" Grid.Column="1" Margin="20,5,20,5"
+                                           Foreground="{StaticResource StatusBar_Text}"
+                                           FontSize="{StaticResource WordsNotifyPopup_Text_size}"
+                                           Text="{TemplateBinding NotifyWords}"/>
+                                </Grid>
                             </Grid>
                             <Grid x:Name="ControlPanelGrid" Grid.Row="2" Background="{TemplateBinding Background}"
                                   RenderTransformOrigin="0.5,0.5"
@@ -535,6 +558,7 @@
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="TranslateVertical" />
                                 </Grid.RenderTransform>
+                                <!--AdditionSettings-->
                                 <Grid x:Name="MediaControlsCommandBar_Additionals" Visibility="Collapsed" RenderTransformOrigin=".5 1">
                                     <Grid.RenderTransform>
                                         <ScaleTransform x:Name="MediaControlsCommandBar_Additionals_ScaleTransform" />
@@ -544,7 +568,8 @@
                                         <RowDefinition Height="2"/>
                                     </Grid.RowDefinitions>
                                     <local:DevidePanel >
-                                        <Button x:Name="MediaControlsCommandBar_Additionals_SaveLocal" Style="{StaticResource SimpleButton}">
+                                        <Button x:Name="MediaControlsCommandBar_Additionals_SaveLocal" 
+                                                           Style="{StaticResource SimpleButton}">
                                             <FontIcon Glyph="&#xE792;" Foreground="{StaticResource ControlBar_Text}" 
                                               Width="{StaticResource URLResourcesSearch_Icon_Size}" 
                                               Height="{StaticResource URLResourcesSearch_Icon_Size}"
@@ -716,10 +741,10 @@
                             <Grid x:Name="VolumeMutePopup" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" Visibility="Collapsed"
                                   Background="{TemplateBinding Background}" Width="150" Height="150" Opacity="0">
                                 <Viewbox Margin="50">
-                                    <SymbolIcon x:Name="VolumeMutePopup_Icon" Symbol="Volume" Foreground="{StaticResource StatusBar_Text}" 
-                                           />
+                                    <SymbolIcon x:Name="VolumeMutePopup_Icon" Symbol="Volume" Foreground="{StaticResource StatusBar_Text}" />
                                 </Viewbox>
                             </Grid>
+                           
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -862,7 +887,56 @@
         </Setter>
     </Style>
 
-    <!--CommandBar-->
+    <!--StackButton-->
+    <Style x:Key="StackButton" TargetType="local:StackButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:StackButton">
+                    <Grid x:Name="RootPanel">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" >
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent_ScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:2.5" Value="1"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="0"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderThickness="{TemplateBinding BorderThickness}" 
+                                          BorderBrush="{TemplateBinding BorderBrush}" ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                          Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" 
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" 
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <TextBlock x:Name="ButtonContent" Grid.Column="1" Text="{TemplateBinding Textcontent}" Height="{TemplateBinding Height}" VerticalAlignment="Center" 
+                                   HorizontalAlignment="Center" Visibility="Visible" 
+                                   FontSize="13" Margin="10,2,10,2">
+                            <TextBlock.RenderTransform>
+                                <ScaleTransform x:Name="ButtonContent_ScaleTransform" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-   
 </ResourceDictionary>
