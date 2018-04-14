@@ -195,6 +195,13 @@
         <Setter Property="Height" Value="40"/>
     </Style>
     
+    <!--DoubleClickButton-->
+    <Style x:Key="MediaControlsCommandBar_Additionals_DoubleClickButton" TargetType="local:DoubleClickButton">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Foreground" Value="{StaticResource StatusBar_Text}"/>
+        <Setter Property="FontSize" Value="{StaticResource DoubleClickButton_TextSize}"/>
+    </Style>
+    
     <!--Thumb-->
     <Style x:Key="DarkThumbStyle"
            TargetType="Thumb">

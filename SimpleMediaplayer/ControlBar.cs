@@ -12,26 +12,16 @@ using Windows.UI.Core;
 using Windows.ApplicationModel.Core;
 using Windows.Media.Core;
 using Windows.UI.ViewManagement;
-using Windows.Graphics.Display;
-using Windows.Devices.Input;
-using System.Diagnostics;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Composition;
-using Microsoft.Graphics.Canvas.Effects;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI;
-using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using System.Net.Http;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Storage.Pickers;
-using Windows.Foundation;
 using Windows.Storage.AccessCache;
-using System.Security.Principal;
 using System.Text;
 using Newtonsoft.Json;
+using Windows.Storage.FileProperties;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace SimpleMediaplayer
 {
@@ -52,15 +42,26 @@ namespace SimpleMediaplayer
 
         private DispatcherTimer ProgressTimer;
         private DispatcherTimer VolumeSliderVisiblityTimer;
+        private DispatcherTimer AutoHideTimer;
+
 
         //UIElement
-        private PlayList PlayListControl;
         private Slider ProgressSlider;
         private Slider VolumeSlider;
         private TextBox URLResourcesSearchTextBox;
         private SymbolIcon VolumeMutePopupIcon;
 
         //DependenceProperty
+        #region 自动隐藏阻止标签
+        public bool CanAutoHide
+        {
+            get { return (bool)GetValue(CanAutoHideProperty); }
+            set { SetValue(CanAutoHideProperty, value); }
+        }
+        public static readonly DependencyProperty CanAutoHideProperty =
+            DependencyProperty.Register("CanAutoHide", typeof(bool), typeof(ControlBar), new PropertyMetadata(true));
+        #endregion
+
         #region 强制软件解码
         public bool ForceSoftwareDecode
         {
@@ -91,7 +92,7 @@ namespace SimpleMediaplayer
         }
         #endregion
 
-        #region 自动隐藏
+        #region 自动隐藏属性
         private static readonly DependencyProperty AutoHideProperty = DependencyProperty.RegisterAttached("AutoHide", typeof(bool), typeof(ControlBar),
             new PropertyMetadata(true));
         public bool AutoHide
@@ -121,24 +122,24 @@ namespace SimpleMediaplayer
         }
         #endregion
 
-        #region 文件播放列表
-        private static readonly DependencyProperty PalyListProperty = DependencyProperty.RegisterAttached("PlayList", typeof(List<String>), typeof(ControlBar),
-            new PropertyMetadata(null));
-        public List<String> PlayList
+        #region 关联播放列表
+        public PlayList AttachedPlayList
         {
-            get { return (List<String>)this.GetValue(PalyListProperty); }
-            set { this.SetValue(PalyListProperty, value); }
+            get { return (PlayList)GetValue(AttachedPlayListProperty); }
+            set { SetValue(AttachedPlayListProperty, value); }
         }
+        public static readonly DependencyProperty AttachedPlayListProperty =
+            DependencyProperty.Register("AttachedPlayList", typeof(PlayList), typeof(ControlBar), new PropertyMetadata(null));
         #endregion
 
         //Motheds
         #region 重写
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "PlayListHide", false);
             VisualStateManager.GoToState(this, "SettingButton_Normal", false);
             VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
+            AttachedPlayList.AttachedControlBar = this;
             IsVisible = true;
         }
 
@@ -172,8 +173,8 @@ namespace SimpleMediaplayer
             var URLResources_Search_PreLoad = GetTemplateChild("URLResources_Search_PreLoad") as Button;
             URLResources_Search_PreLoad.Click += URLResources_Search_PreLoad_CLick;
 
-            var SaveLocal = GetTemplateChild("MediaControlsCommandBar_Additionals_SaveLocal") as Button;
-            SaveLocal.Click += SaveLocal_Click;
+            var SaveLocal = GetTemplateChild("MediaControlsCommandBar_Additionals_SaveLocal") as DoubleClickButton;
+            SaveLocal.Tapped += SaveLocal_Click;
             #endregion
 
             #region needReference
@@ -188,7 +189,7 @@ namespace SimpleMediaplayer
             ProgressSlider = GetTemplateChild("ProgressSlider") as Slider;
             ProgressSlider.Loaded += ProgressSlider_Loaded;
 
-            PlayListControl = GetTemplateChild("PlayList") as PlayList;
+            AttachedPlayList = GetTemplateChild("PlayList") as PlayList;
             #endregion
 
             base.OnApplyTemplate();
@@ -197,6 +198,7 @@ namespace SimpleMediaplayer
 
         #region 内部控件事件
 
+        //播放、暂停
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)//PlayPause
         {
             if (AttachedMediaPlayer.Source != null)
@@ -216,7 +218,8 @@ namespace SimpleMediaplayer
                 }
         }
 
-        private async void SaveLocal_Click(object sender, RoutedEventArgs e)
+        //更改文件位置
+        private async void SaveLocal_Click(object sender, TappedRoutedEventArgs e)
         {
             FolderPicker pick = new FolderPicker();
             pick.FileTypeFilter.Add(".mp3");
@@ -234,6 +237,7 @@ namespace SimpleMediaplayer
                 SavePathToLocal();
         }
 
+        //设置按钮
         private void SettingButton_Click(object sender, RoutedEventArgs e)//Setting
         {
             if (IsAdditionSettingVisible)
@@ -244,12 +248,15 @@ namespace SimpleMediaplayer
             IsAdditionSettingVisible = !IsAdditionSettingVisible;
         }
 
+        //打开在线播放输入框
         private void OpenUrlRescourse_Click(object sender, RoutedEventArgs e)//OpenUrlRescourse
         {
+            CanAutoHide = false;
             VisualStateManager.GoToState(this, "PlayListHide", false);
             VisualStateManager.GoToState(this, "URLResources_Search_Show", false);
         }
 
+        //全屏播放
         private void FullWindowButton_Click(object sender, RoutedEventArgs e)//FullWindow
         {
             if (IsFullWindow)
@@ -266,20 +273,29 @@ namespace SimpleMediaplayer
             IsFullWindow = !IsFullWindow;
         }
 
+        //打开播放列表
         private void OpenPlayList_Click(object sender, RoutedEventArgs e)//OpenPlayList
         {
-            if (PlayListControl.IsPlaylistVisible)
+            if (AttachedPlayList.IsPlaylistVisible)
+            {
+                CanAutoHide = false;
                 VisualStateManager.GoToState(this, "PlayListHide", false);
+            }
             else
+            {
+                TryAutoHide();
                 VisualStateManager.GoToState(this, "PlayListShow", false);
+            }
         }
 
+        //收起在线播放栏
         private void URLResources_Search_Icon_Click(object sender, RoutedEventArgs e)//URLResources_Search_Icon
         {
+            TryAutoHide();
             VisualStateManager.GoToState(this, "URLResources_Search_Hide", false);
-
         }
 
+        //音量条值变化
         private void VolumeSlider_OnValueChange(object sender, RangeBaseValueChangedEventArgs e)//VolumeSlider
         {
             if (e.NewValue == 0 || e.OldValue == 0)
@@ -290,17 +306,20 @@ namespace SimpleMediaplayer
             }
         }
 
+        //音量条指针行为
         private void VolumeSlider_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             ShowVolumeBar();
         }
 
+        //进度条加载
         private void ProgressSlider_Loaded(object sender, RoutedEventArgs e)//ProgressSlider
         {
 
         }
 
         #region 播放事件处理
+        //打开文件
         private async void OpenFileButton_Click(object sender, RoutedEventArgs args)
         {
             var picker = new FileOpenPicker();
@@ -314,18 +333,19 @@ namespace SimpleMediaplayer
             {
                 NowPlay = file[0].Name;
                 var NowPlaySource = MediaSource.CreateFromStorageFile(file[0]);
-                NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                CreatList(file);
+                NowPlaySource.OpenOperationCompleted += Mediasource_OpenOperationCompleted;
                 AttachedMediaPlayer.Source = NowPlaySource;
             }
-            //SYEngine.Core.ForceSoftwareDecode = true;
         }
 
+        //在线播放URL
         private void URLResources_Search_Online_Click(object sender, RoutedEventArgs args)
         {
             try
             {
                 var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
-                NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                NowPlaySource.OpenOperationCompleted += Mediasource_OpenOperationCompleted;
                 AttachedMediaPlayer.Source = NowPlaySource;
             }
             catch (Exception)
@@ -334,12 +354,13 @@ namespace SimpleMediaplayer
             }
         }
 
+        //播放并下载URL
         private void URLResources_Search_PreLoad_CLick(object sender, RoutedEventArgs args)
         {
             try
             {
                 var NowPlaySource = MediaSource.CreateFromUri(new Uri(URLResourcesSearchTextBox.Text.ToString()));
-                NowPlaySource.OpenOperationCompleted += mediasource_OpenOperationCompleted;
+                NowPlaySource.OpenOperationCompleted += Mediasource_OpenOperationCompleted;
                 DownloadFile(URLResourcesSearchTextBox.Text.ToString());
                 AttachedMediaPlayer.Source = NowPlaySource;
             }
@@ -349,11 +370,13 @@ namespace SimpleMediaplayer
             }
         }
 
-        private async void mediasource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
+        //打开后连带动作
+        private async void Mediasource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
             var _Span = sender.Duration.GetValueOrDefault();
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
+                AttachedMediaPlayer.Pause();
                 ProgressSlider.Minimum = 0;
                 ProgressSlider.Maximum = _Span.TotalSeconds;
                 ProgressSlider.StepFrequency = 1;
@@ -395,8 +418,15 @@ namespace SimpleMediaplayer
         {
             IsVisible = false;
             VisualStateManager.GoToState(this, "ControlPanelFadeOut", false);
-            if (PlayListControl.IsPlaylistVisible)
+            if (AttachedPlayList.IsPlaylistVisible)
                 VisualStateManager.GoToState(this, "PlayListHide", false);
+            AutoHideTimer.Stop();
+        }
+
+        public void SetSource(MediaSource m)
+        {
+            m.OpenOperationCompleted += Mediasource_OpenOperationCompleted;
+            AttachedMediaPlayer.Source = m;
         }
 
         public void ShowVolumeBar()
@@ -426,8 +456,10 @@ namespace SimpleMediaplayer
         //改变保存路径
         private async void SavePathToLocal()
         {
-            UserdefaultSettings settings = new UserdefaultSettings();
-            settings.Savelocal = SaveLocal.ToString();
+            UserdefaultSettings settings = new UserdefaultSettings
+            {
+                Savelocal = SaveLocal.ToString()
+            };
 
             string s = JsonConvert.SerializeObject(settings);
             await WriteToFile("UserSettings.dat", Encoding.Unicode.GetBytes(s), SaveType.config);
@@ -449,7 +481,7 @@ namespace SimpleMediaplayer
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     WordsNotifyPopupAni("Please Check Your Web Connection ");
                 }
@@ -462,11 +494,14 @@ namespace SimpleMediaplayer
         private async void CheckSaveloc()
         {
             byte[] bt = await ReadfromFile("UserSettings.dat");
-            string f = Encoding.Unicode.GetString(bt);
-            if (f != null)
+            if (bt != null)
             {
-                UserdefaultSettings s = JsonConvert.DeserializeObject<UserdefaultSettings>(f);
-                SaveLocal = s.Savelocal;
+                string f = Encoding.Unicode.GetString(bt);
+                if (f != null)
+                {
+                    UserdefaultSettings s = JsonConvert.DeserializeObject<UserdefaultSettings>(f);
+                    SaveLocal = s.Savelocal;
+                }
             }
         }
 
@@ -512,7 +547,7 @@ namespace SimpleMediaplayer
                         break;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 switch (type)
                 {
@@ -548,19 +583,49 @@ namespace SimpleMediaplayer
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
              {
-                 NotifyWords = notify;
+                 CanAutoHide = false;
+                 NotifyWords = notify;                 
                  VisualStateManager.GoToState(this, "WordsNotifyPopupHide", false);
                  VisualStateManager.GoToState(this, "WordsNotifyPopupShow", false);
+                 Task.Delay(4500).Wait();
+                 TryAutoHide();
              });
         }
 
+        //软解
         private void UseCore()
         {
 
         }
+
+        //创建播放列表
+        private async void CreatList(IReadOnlyList<StorageFile> file)
+        {
+            List<MediaInfo> infolist = new List<MediaInfo>();
+
+            foreach(StorageFile f in file)
+            {
+                MediaInfo m = new MediaInfo();
+                var thumbnail = await f.GetScaledImageAsThumbnailAsync(ThumbnailMode.VideosView);
+                BitmapImage bitmapImage = new BitmapImage();
+                using (InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream())
+                {
+                    await RandomAccessStream.CopyAsync(thumbnail, randomAccessStream);
+                    randomAccessStream.Seek(0);
+                    bitmapImage.SetSource(randomAccessStream);
+                    m.FileScaledImage = bitmapImage;
+                }
+                m.FileAccess = f;
+                m.FileName = f.Name;
+                infolist.Add(m);
+            }
+            AttachedPlayList.FileList = infolist;
+          //  AttachedPlayList.ItemsSource = AttachedPlayList.FileList;
+        }
         #endregion
 
         #region 定时器异步事件
+        //进度条更新
         private void ProgressTimer_Tick(object sender, object e)
         {
             ProgressSlider.Value = ((TimeSpan)AttachedMediaPlayer.PlaybackSession.Position).TotalSeconds;
@@ -573,20 +638,29 @@ namespace SimpleMediaplayer
             }
         }
 
+        //音量条隐藏
         private void VolumeSliderVisiblityTimer_Tick(object sender, object e)
         {
             HideVolumeBar();
         }
 
-        private async void AutoHideControlBar()
+        //控制栏隐藏
+        private void AutoHideControlBar()
         {
-            if (AutoHide && AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Playing))
-            {
-                Task t = new Task(() => { Task.Delay(5000).Wait(); });
-                t.Start();
-                await t;
+            AutoHideTimer.Start();
+        }
+        private void AutoHideTimer_Tick(object sender, object e)
+        {
+            if (AutoHide && AttachedMediaPlayer.PlaybackSession.PlaybackState.Equals(MediaPlaybackState.Playing) &&
+               CanAutoHide)
                 Hide();
-            }
+        }
+
+        //尝试隐藏控制栏
+        private void TryAutoHide()
+        {
+            CanAutoHide = true;
+            AutoHideControlBar();
         }
         #endregion
 
@@ -597,15 +671,21 @@ namespace SimpleMediaplayer
             CheckSaveloc();
 
             //进度条更新
-            ProgressTimer = new DispatcherTimer();
-            ProgressTimer.Interval = TimeSpan.FromMilliseconds(500);
+            ProgressTimer = new DispatcherTimer{
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
             ProgressTimer.Tick += ProgressTimer_Tick;
 
             //音量条隐藏
-            VolumeSliderVisiblityTimer = new DispatcherTimer();
-            VolumeSliderVisiblityTimer.Interval = TimeSpan.FromSeconds(3);
+            VolumeSliderVisiblityTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
             VolumeSliderVisiblityTimer.Tick += VolumeSliderVisiblityTimer_Tick;
 
+            //自动隐藏计时
+            AutoHideTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+            AutoHideTimer.Tick += AutoHideTimer_Tick;
         }
     }
 
@@ -681,8 +761,10 @@ namespace SimpleMediaplayer
 
         public SystemInfo()
         {
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1);
+            DispatcherTimer timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
             Battery.AggregateBattery.ReportUpdated += GetBatteryUpdate;
             timer.Tick += UpdateTime;
             timer.Start();

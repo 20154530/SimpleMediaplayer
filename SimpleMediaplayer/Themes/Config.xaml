@@ -40,7 +40,8 @@
     <!--大小配置-->
     <x:Double x:Key="StatusBar_Text_Size">14</x:Double>
     <x:Double x:Key="WordsNotifyPopup_Text_size">12.8</x:Double>
-    
+    <x:Double x:Key="DoubleClickButton_TextSize">16</x:Double>
+
     <x:Double x:Key="ControlBar_Progress_Height">10</x:Double>
     
     <x:Double x:Key="PlayList_IconSize">22</x:Double>

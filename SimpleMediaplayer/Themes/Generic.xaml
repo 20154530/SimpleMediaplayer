@@ -525,11 +525,10 @@
                                 </Grid.ColumnDefinitions>
                                 <!--PlayerList-->
                                 <local:PlayList x:Name="PlayList" Background="{TemplateBinding Background}" Grid.Row="1"
-                                                Opacity="0" IsPlaylistVisible="False" RenderTransformOrigin=".5 0">
+                                                Opacity="0" IsPlaylistVisible="False" RenderTransformOrigin=".5 0" >
                                     <local:PlayList.RenderTransform>
                                         <TranslateTransform x:Name="PlayList_TranslateTransform" />
                                     </local:PlayList.RenderTransform>
-                                   
                                 </local:PlayList>
                                 <!--Wordsnotify-->
                                 <Grid x:Name="WordsNotifyPopup" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
@@ -568,17 +567,19 @@
                                         <RowDefinition Height="2"/>
                                     </Grid.RowDefinitions>
                                     <local:DevidePanel >
-                                        <Button x:Name="MediaControlsCommandBar_Additionals_SaveLocal" 
-                                                           Style="{StaticResource SimpleButton}">
+                                        <local:DoubleClickButton x:Name="MediaControlsCommandBar_Additionals_SaveLocal" Textcontent="ChangeLoc"
+                                                                 Style="{StaticResource MediaControlsCommandBar_Additionals_DoubleClickButton}">
                                             <FontIcon Glyph="&#xE792;" Foreground="{StaticResource ControlBar_Text}" 
                                               Width="{StaticResource URLResourcesSearch_Icon_Size}" 
                                               Height="{StaticResource URLResourcesSearch_Icon_Size}"
                                               Margin="{StaticResource URLResourcesSearch_Icon_Margin}"
                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Button>
+                                        </local:DoubleClickButton>
+                                        
                                     </local:DevidePanel>
                                     <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Fill="{StaticResource StatusBar_Seperator_bg}"/>
                                 </Grid>
+                                <!--TimeLine-->
                                 <Border x:Name="MediaTransportControls_Timeline_Border"
                                         Grid.Row="1">
                                     <Grid x:Name="MediaTransportControls_Timeline_Grid">
@@ -621,6 +622,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
+                                <!--CommanderBar-->
                                 <CommandBar x:Name="MediaControlsCommandBar"
                                             Grid.Row="2"
                                             Padding="0"
@@ -780,6 +782,22 @@
                 Value="True" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid Width="240">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="{Binding FileScaledImage}" Grid.Column="0" Width="30" Height="30" HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding FileName}" Foreground="{StaticResource StatusBar_Text}" Grid.Column="1"
+                                   FontSize="{StaticResource StatusBar_Text_Size}" TextWrapping="NoWrap" TextAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ItemContainerTransitions">
             <Setter.Value>
                 <TransitionCollection>
@@ -888,27 +906,42 @@
     </Style>
 
     <!--StackButton-->
-    <Style x:Key="StackButton" TargetType="local:StackButton">
+
+    <Style TargetType="local:DoubleClickButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:StackButton">
+                <ControlTemplate TargetType="local:DoubleClickButton">
                     <Grid x:Name="RootPanel">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" >
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="PointerOver">
+                                <VisualState x:Name="Cover">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="Collapsed"/>
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent_ScaleTransform" Storyboard.TargetProperty="ScaleX">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="1"/>
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:2.5" Value="1"/>
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:3" Value="0"/>
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ButtonContent" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Opacity">
+                                            <LinearDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            <LinearDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -917,22 +950,13 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
                         <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderThickness="{TemplateBinding BorderThickness}" 
                                           BorderBrush="{TemplateBinding BorderBrush}" ContentTemplate="{TemplateBinding ContentTemplate}" 
                                           Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" 
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" 
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        <TextBlock x:Name="ButtonContent" Grid.Column="1" Text="{TemplateBinding Textcontent}" Height="{TemplateBinding Height}" VerticalAlignment="Center" 
-                                   HorizontalAlignment="Center" Visibility="Visible" 
-                                   FontSize="13" Margin="10,2,10,2">
-                            <TextBlock.RenderTransform>
-                                <ScaleTransform x:Name="ButtonContent_ScaleTransform" />
-                            </TextBlock.RenderTransform>
-                        </TextBlock>
+                        <TextBlock x:Name="ButtonContent" Grid.Column="1" Text="{TemplateBinding Textcontent}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   FontSize="{TemplateBinding FontSize}" Foreground="{TemplateBinding Foreground}" Visibility="Collapsed" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

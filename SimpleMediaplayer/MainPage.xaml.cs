@@ -25,7 +25,7 @@ namespace SimpleMediaplayer
         public MainPage()
         {
             CheckStatusBar();
-            SetOrientation();
+            //SetOrientation();
             this.InitializeComponent();
             this.Loaded += RootPage_Loaded;
             
@@ -46,54 +46,54 @@ namespace SimpleMediaplayer
          
         }
 
-        private void SetOrientation()
-        {
-            _Simpleorientationsensor = SimpleOrientationSensor.GetDefault();
-            if (_Simpleorientationsensor != null)
-            {
-                _Simpleorientationsensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
-            }
-        }
+        //private void SetOrientation()
+        //{
+        //    _Simpleorientationsensor = SimpleOrientationSensor.GetDefault();
+        //    if (_Simpleorientationsensor != null)
+        //    {
+        //        _Simpleorientationsensor.OrientationChanged += new TypedEventHandler<SimpleOrientationSensor, SimpleOrientationSensorOrientationChangedEventArgs>(OrientationChanged);
+        //    }
+        //}
 
-        private async void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
-        {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                SimpleOrientation orientation = e.Orientation;
-                switch (orientation)
-                {
-                    case SimpleOrientation.NotRotated:
+        //private async void OrientationChanged(object sender, SimpleOrientationSensorOrientationChangedEventArgs e)
+        //{
+        //    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+        //    {
+        //        SimpleOrientation orientation = e.Orientation;
+        //        switch (orientation)
+        //        {
+        //            case SimpleOrientation.NotRotated:
 
-                        break;
-                    case SimpleOrientation.Rotated90DegreesCounterclockwise:
+        //                break;
+        //            case SimpleOrientation.Rotated90DegreesCounterclockwise:
 
-                        break;
-                    case SimpleOrientation.Rotated180DegreesCounterclockwise:
+        //                break;
+        //            case SimpleOrientation.Rotated180DegreesCounterclockwise:
 
-                        break;
-                    case SimpleOrientation.Rotated270DegreesCounterclockwise:
+        //                break;
+        //            case SimpleOrientation.Rotated270DegreesCounterclockwise:
 
-                        break;
-                    case SimpleOrientation.Faceup:
+        //                break;
+        //            case SimpleOrientation.Faceup:
 
-                        break;
-                    case SimpleOrientation.Facedown:
+        //                break;
+        //            case SimpleOrientation.Facedown:
 
-                        break;
-                    default:
+        //                break;
+        //            default:
 
-                        break;
-                }
-            });
-        }
+        //                break;
+        //        }
+        //    });
+        //}
 
         private void RootPage_Loaded(object sender, RoutedEventArgs e)
         {
-            setMediaPlayer();
+            SetMediaPlayer();
             _MediaPlayer_ControlBar.SetChildBindings();
         }
 
-        private void setMediaPlayer()//Init MediaPlayer
+        private void SetMediaPlayer()//Init MediaPlayer
         {
             _PlayerCore = new MediaPlayer();
             _PlayerCore.CommandManager.IsEnabled = false;
