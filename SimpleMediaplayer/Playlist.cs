@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Windows.Media.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -50,18 +51,18 @@ namespace SimpleMediaplayer
         #endregion
 
         #region 文件播放列表
-        private static readonly DependencyProperty FileListProperty = DependencyProperty.RegisterAttached("FileList", typeof(List<MediaInfo>), typeof(PlayList),
-            new PropertyMetadata(null,new PropertyChangedCallback(OnFileListChanged)));
+        private static readonly DependencyProperty FileListProperty = DependencyProperty.RegisterAttached("FileList", typeof(ObservableCollection<MediaInfo>), typeof(PlayList),
+            new PropertyMetadata(new ObservableCollection<MediaInfo>(), new PropertyChangedCallback(OnFileListChanged)));
 
         private static void OnFileListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            PlayList p = (PlayList)d;
-            p.ItemsSource = e.NewValue;
+            //PlayList p = (PlayList)d;
+            //p.ItemsSource = e.NewValue;
         }
 
-        public List<MediaInfo> FileList
+        public ObservableCollection<MediaInfo> FileList
         {
-            get { return (List<MediaInfo>)this.GetValue(FileListProperty); }
+            get { return (ObservableCollection<MediaInfo>)this.GetValue(FileListProperty); }
             set { this.SetValue(FileListProperty, value); }
         }
         #endregion

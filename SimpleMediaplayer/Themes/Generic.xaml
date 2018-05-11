@@ -525,7 +525,7 @@
                                 </Grid.ColumnDefinitions>
                                 <!--PlayerList-->
                                 <local:PlayList x:Name="PlayList" Background="{TemplateBinding Background}" Grid.Row="1"
-                                                Opacity="0" IsPlaylistVisible="False" RenderTransformOrigin=".5 0" >
+                                                Opacity="0" IsPlaylistVisible="False" RenderTransformOrigin=".5 0" ItemsSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=AttachedPlayList.FileList}">
                                     <local:PlayList.RenderTransform>
                                         <TranslateTransform x:Name="PlayList_TranslateTransform" />
                                     </local:PlayList.RenderTransform>
@@ -785,7 +785,7 @@
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <Grid Width="240">
+                    <Grid MaxWidth="240">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
@@ -906,7 +906,6 @@
     </Style>
 
     <!--StackButton-->
-
     <Style TargetType="local:DoubleClickButton">
         <Setter Property="Template">
             <Setter.Value>

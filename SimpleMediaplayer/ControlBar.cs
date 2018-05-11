@@ -94,7 +94,7 @@ namespace SimpleMediaplayer
 
         #region 自动隐藏属性
         private static readonly DependencyProperty AutoHideProperty = DependencyProperty.RegisterAttached("AutoHide", typeof(bool), typeof(ControlBar),
-            new PropertyMetadata(true));
+            new PropertyMetadata(false));
         public bool AutoHide
         {
             get { return (bool)this.GetValue(AutoHideProperty); }
@@ -251,7 +251,7 @@ namespace SimpleMediaplayer
         //打开在线播放输入框
         private void OpenUrlRescourse_Click(object sender, RoutedEventArgs e)//OpenUrlRescourse
         {
-            CanAutoHide = false;
+            ForcenotAutohide();
             VisualStateManager.GoToState(this, "PlayListHide", false);
             VisualStateManager.GoToState(this, "URLResources_Search_Show", false);
         }
@@ -278,12 +278,12 @@ namespace SimpleMediaplayer
         {
             if (AttachedPlayList.IsPlaylistVisible)
             {
-                CanAutoHide = false;
+                TryAutoHide();
                 VisualStateManager.GoToState(this, "PlayListHide", false);
             }
             else
             {
-                TryAutoHide();
+                ForcenotAutohide();
                 VisualStateManager.GoToState(this, "PlayListShow", false);
             }
         }
@@ -376,7 +376,8 @@ namespace SimpleMediaplayer
             var _Span = sender.Duration.GetValueOrDefault();
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                AttachedMediaPlayer.Pause();
+                VisualStateManager.GoToState(this, "PlayState", false);
+                ProgressTimer.Stop();
                 ProgressSlider.Minimum = 0;
                 ProgressSlider.Maximum = _Span.TotalSeconds;
                 ProgressSlider.StepFrequency = 1;
@@ -582,13 +583,11 @@ namespace SimpleMediaplayer
         private async void WordsNotifyPopupAni(string notify)
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-             {
-                 CanAutoHide = false;
+             {                 
+                 ForcenotAutohide();
                  NotifyWords = notify;                 
                  VisualStateManager.GoToState(this, "WordsNotifyPopupHide", false);
                  VisualStateManager.GoToState(this, "WordsNotifyPopupShow", false);
-                 Task.Delay(4500).Wait();
-                 TryAutoHide();
              });
         }
 
@@ -617,9 +616,8 @@ namespace SimpleMediaplayer
                 }
                 m.FileAccess = f;
                 m.FileName = f.Name;
-                infolist.Add(m);
+                AttachedPlayList.FileList.Add(m);
             }
-            AttachedPlayList.FileList = infolist;
           //  AttachedPlayList.ItemsSource = AttachedPlayList.FileList;
         }
         #endregion
@@ -661,6 +659,13 @@ namespace SimpleMediaplayer
         {
             CanAutoHide = true;
             AutoHideControlBar();
+        }
+
+        //尝试停止隐藏控制栏
+        private void ForcenotAutohide()
+        {
+            CanAutoHide = false;
+            AutoHideTimer.Stop();
         }
         #endregion
 
